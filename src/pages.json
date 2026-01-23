@@ -1,0 +1,97 @@
+{
+  "pages": [
+    {
+      "path": "pages/loading/index",
+      "style": {
+        "navigationBarTitleText": "云上·皮影"
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "主大厅"
+      }
+    },
+    {
+      "path": "pages/workshop/index",
+      "style": {
+        "navigationBarTitleText": "皮影工坊"
+      }
+    },
+    {
+      "path": "pages/theater/index",
+      "style": {
+        "navigationBarTitleText": "指尖剧场"
+      }
+    },
+    {
+      "path": "pages/wiki/menu",
+      "style": {
+        "navigationBarTitleText": "影卷"
+      }
+    },
+    {
+      "path": "pages/wiki/history",
+      "style": {
+        "navigationBarTitleText": "溯源·历史"
+      }
+    },
+    {
+      "path": "pages/wiki/craft",
+      "style": {
+        "navigationBarTitleText": "匠心·工艺"
+      }
+    },
+    {
+      "path": "pages/wiki/music",
+      "style": {
+        "navigationBarTitleText": "唱腔·特色"
+      }
+    },
+    {
+      "path": "pages/market/index",
+      "style": {
+        "navigationBarTitleText": "文创集市"
+      }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "个人中心"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "云上·皮影",
+    "navigationBarBackgroundColor": "#000000",
+    "backgroundColor": "#2C1608"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#FFD700",
+    "backgroundColor": "#000000",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "大厅"
+      },
+      {
+        "pagePath": "pages/workshop/index",
+        "text": "工坊"
+      },
+      {
+        "pagePath": "pages/theater/index",
+        "text": "剧场"
+      },
+      {
+        "pagePath": "pages/wiki/menu",
+        "text": "影卷"
+      },
+      {
+        "pagePath": "pages/market/index",
+        "text": "集市"
+      }
+    ]
+  }
+}
