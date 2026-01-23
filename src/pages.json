@@ -45,7 +45,8 @@
     {
       "path": "pages/wiki/history",
       "style": {
-        "navigationBarTitleText": "溯源·历史"
+        "navigationBarTitleText": "溯源·历史",
+        "navigationStyle": "custom"
       }
     },
     {
