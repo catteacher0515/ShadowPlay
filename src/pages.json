@@ -58,7 +58,8 @@
     {
       "path": "pages/wiki/music",
       "style": {
-        "navigationBarTitleText": "唱腔·特色"
+        "navigationBarTitleText": "唱腔·特色",
+        "navigationStyle": "custom"
       }
     },
     {
