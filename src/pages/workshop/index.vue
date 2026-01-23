@@ -94,11 +94,14 @@
         </view>
       </scroll-view>
     </view>
+    
+    <CustomTabBar current-path="/pages/workshop/index" />
   </view>
 </template>
 
 <script setup>
 import { ref, reactive, computed } from 'vue'
+import CustomTabBar from '@/components/CustomTabBar.vue'
 
 // --- State ---
 const currentTab = ref('head') // head, body, hand, leg

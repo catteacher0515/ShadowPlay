@@ -39,39 +39,20 @@
     </view>
 
     <!-- Layer 5: Custom TabBar -->
-    <view class="custom-tabbar">
-      <view 
-        v-for="(item, index) in tabItems" 
-        :key="index"
-        class="tab-item"
-        :class="{ active: activeTab === item.key }"
-        @click="switchTab(item)"
-      >
-        <view class="tab-icon"></view>
-        <text class="tab-text">{{ item.label }}</text>
-      </view>
-    </view>
+    <CustomTabBar current-path="/pages/index/index" />
   </view>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import CustomTabBar from '@/components/CustomTabBar.vue'
 
 // State
 const isBgmPlaying = ref(true)
-const currentTab = ref(-1) // Set to -1 so no tab is active
-
-const tabItems = [
-  { key: 'workshop', label: '工坊', path: '/pages/workshop/index' },
-  { key: 'theater', label: '剧场', path: '/pages/index/index' }, 
-  { key: 'wiki', label: '影卷', path: '/pages/wiki/menu' },
-  { key: 'market', label: '集市', path: '/pages/market/index' }
-]
 
 // Lifecycle
 onMounted(() => {
-  // Hide native TabBar to show our custom one
-  uni.hideTabBar()
+  // uni.hideTabBar() // Removed to avoid error, as native tabbar is not used
 })
 
 // Methods

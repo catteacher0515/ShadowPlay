@@ -3,13 +3,15 @@
     {
       "path": "pages/loading/index",
       "style": {
-        "navigationBarTitleText": "云上·皮影"
+        "navigationBarTitleText": "云上·皮影",
+        "navigationStyle": "custom"
       }
     },
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "主大厅"
+        "navigationBarTitleText": "主大厅",
+        "navigationStyle": "custom"
       }
     },
     {
@@ -22,13 +24,15 @@
     {
       "path": "pages/theater/index",
       "style": {
-        "navigationBarTitleText": "指尖剧场"
+        "navigationBarTitleText": "指尖剧场",
+        "navigationStyle": "custom"
       }
     },
     {
       "path": "pages/wiki/menu",
       "style": {
-        "navigationBarTitleText": "影卷"
+        "navigationBarTitleText": "影卷",
+        "navigationStyle": "custom"
       }
     },
     {
@@ -59,7 +63,8 @@
     {
       "path": "pages/market/index",
       "style": {
-        "navigationBarTitleText": "文创集市"
+        "navigationBarTitleText": "文创集市",
+        "navigationStyle": "custom"
       }
     },
     {
@@ -74,32 +79,5 @@
     "navigationBarTitleText": "云上·皮影",
     "navigationBarBackgroundColor": "#000000",
     "backgroundColor": "#2C1608"
-  },
-  "tabBar": {
-    "color": "#999999",
-    "selectedColor": "#FFD700",
-    "backgroundColor": "#000000",
-    "list": [
-      {
-        "pagePath": "pages/index/index",
-        "text": "大厅"
-      },
-      {
-        "pagePath": "pages/workshop/index",
-        "text": "工坊"
-      },
-      {
-        "pagePath": "pages/theater/index",
-        "text": "剧场"
-      },
-      {
-        "pagePath": "pages/wiki/menu",
-        "text": "影卷"
-      },
-      {
-        "pagePath": "pages/market/index",
-        "text": "集市"
-      }
-    ]
   }
 }
