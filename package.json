@@ -53,7 +53,6 @@
     "@dcloudio/uni-mp-xhs": "3.0.0-4080720251210001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-4080720251210001",
     "pinia": "^2.1.7",
-    "sass": "^1.97.3",
     "vue": "^3.4.21",
     "vue-i18n": "^9.1.9"
   },
@@ -64,6 +63,7 @@
     "@dcloudio/uni-stacktracey": "3.0.0-4080720251210001",
     "@dcloudio/vite-plugin-uni": "3.0.0-4080720251210001",
     "@vue/runtime-core": "^3.4.21",
+    "sass": "^1.97.3",
     "vite": "5.2.8"
   }
 }

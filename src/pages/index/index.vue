@@ -63,7 +63,7 @@ const currentTab = ref(-1) // Set to -1 so no tab is active
 
 const tabItems = [
   { key: 'workshop', label: '工坊', path: '/pages/workshop/index' },
-  { key: 'theater', label: '剧场', path: '/pages/index/index' }, // Assuming Index IS Theater based on context
+  { key: 'theater', label: '剧场', path: '/pages/index/index' }, 
   { key: 'wiki', label: '影卷', path: '/pages/wiki/menu' },
   { key: 'market', label: '集市', path: '/pages/market/index' }
 ]
@@ -92,20 +92,36 @@ const goToDaily = () => {
   });
 }
 
+// --- Fixed Function ---
 const switchTab = (item) => {
-  if (activeTab.value === item.key) return
-  
-  console.log(`Switch Tab to: ${item.label} (${item.path})`)
-  
-  if (item.key === 'theater') {
-    // We are already here, or if this was a real app, we might just stay
-    activeTab.value = item.key
-  } else {
-    // In a real app with custom tabbar, we might use uni.switchTab or uni.redirectTo
-    // Since we are simulating the layout:
-    // uni.switchTab({ url: item.path })
-  }
-}
+  // 1. Update State (Use 'currentTab', NOT 'activeTab')
+  currentTab.value = item.key;
+
+  // 2. Get the target path
+  const url = item.path;
+
+  console.log(`Switching Tab to: ${url}`);
+
+  // 3. Use switchTab for TabBar pages
+  uni.switchTab({
+    url: url,
+    success: () => {
+      console.log('Tab switch successful');
+    },
+    fail: (err) => {
+      console.error('SwitchTab failed:', err);
+      // Fallback: If for some reason it's NOT a tab page, try navigateTo
+      // This makes the code robust for both types
+      uni.navigateTo({
+        url: url,
+        fail: (navErr) => {
+           console.error('NavigateTo also failed:', navErr);
+           uni.showToast({ title: '无法跳转', icon: 'none' });
+        }
+      });
+    }
+  });
+};
 </script>
 
 <style lang="scss" scoped>

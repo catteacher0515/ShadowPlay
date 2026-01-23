@@ -15,7 +15,8 @@
     {
       "path": "pages/workshop/index",
       "style": {
-        "navigationBarTitleText": "皮影工坊"
+        "navigationBarTitleText": "皮影工坊",
+        "navigationStyle": "custom"
       }
     },
     {
