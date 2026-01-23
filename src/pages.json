@@ -51,7 +51,8 @@
     {
       "path": "pages/wiki/craft",
       "style": {
-        "navigationBarTitleText": "匠心·工艺"
+        "navigationBarTitleText": "匠心·工艺",
+        "navigationStyle": "custom"
       }
     },
     {
