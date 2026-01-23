@@ -81,8 +81,15 @@ const toggleBgm = () => {
 }
 
 const goToDaily = () => {
-  console.log('Navigate to /pages/wiki/daily')
-  // uni.navigateTo({ url: '/pages/wiki/daily' })
+  console.log("Navigating to Daily Page..."); // Debug log
+  uni.navigateTo({
+    url: '/pages/wiki/daily',
+    fail: (err) => {
+      console.error("Navigation failed:", err);
+      // Fallback if the path is wrong
+      uni.showToast({ title: '页面路径错误', icon: 'none' });
+    }
+  });
 }
 
 const switchTab = (item) => {

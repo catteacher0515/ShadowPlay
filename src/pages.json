@@ -31,6 +31,13 @@
       }
     },
     {
+      "path": "pages/wiki/daily",
+      "style": {
+        "navigationBarTitleText": "拾影·日签",
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/wiki/history",
       "style": {
         "navigationBarTitleText": "溯源·历史"
