@@ -1,272 +1,236 @@
 <template>
   <view class="market-container">
-    <!-- Custom Navbar -->
-    <view class="custom-navbar" :style="{ paddingTop: safeAreaTop + 'px' }">
-      <view class="nav-content">
-        <text class="page-title">文创集市</text>
-      </view>
+    
+    <view class="bg-dark"></view>
+
+    <view class="custom-navbar" :style="{ paddingTop: safeAreaTop + 'px', height: navHeight + 'px' }">
+      <view class="nav-title" :style="{ lineHeight: navHeight + 'px' }">文创集市</view>
     </view>
 
-    <scroll-view scroll-y class="scroll-content" :style="{ paddingTop: (safeAreaTop + 44) + 'px' }">
-      <!-- Hero Banner -->
-      <view class="hero-banner">
-        <view class="banner-placeholder">
-          <text class="banner-text">拾影 · 文创</text>
-        </view>
-      </view>
-
-      <!-- Sticky Tabs -->
-      <view class="sticky-tabs" :style="{ top: (safeAreaTop + 44) + 'px' }">
-        <view 
-          v-for="(cat, index) in categories" 
-          :key="index"
-          class="tab-item"
-          :class="{ active: currentCatIndex === index }"
-          @click="switchCat(index)"
-        >
-          <text>{{ cat }}</text>
-        </view>
-      </view>
-
-      <!-- Product Grid -->
-      <view class="product-grid">
-        <view 
-          v-for="item in displayProducts" 
-          :key="item.id"
-          class="product-card"
-          @click="buyItem(item)"
-        >
-          <view class="card-image" :style="{ backgroundColor: item.color }"></view>
-          <view class="card-info">
-            <text class="card-title">{{ item.title }}</text>
-            <view class="card-tags">
-              <text v-for="(tag, i) in item.tags" :key="i" class="tag">{{ tag }}</text>
-            </view>
-            <view class="card-footer">
-              <text class="price">¥{{ item.price }}</text>
-              <view class="btn-buy">兑</view>
-            </view>
-          </view>
-        </view>
-      </view>
+    <scroll-view scroll-y class="scroll-content" :style="{ paddingTop: (safeAreaTop + navHeight) + 'px' }">
       
-      <!-- Bottom Padding for TabBar -->
-      <view style="height: 100px;"></view>
+      <view class="hero-banner">
+        <image class="banner-img" src="/static/images/market/banner-market-bridge.jpg" mode="aspectFill" />
+        <view class="banner-text">
+            <text class="slogan-main">拾影 · 文创</text>
+            <text class="slogan-sub">让非遗回归生活</text>
+        </view>
+        <view class="banner-fade"></view>
+      </view>
+
+      <view 
+        class="sticky-tabs" 
+        :style="{ top: (safeAreaTop + navHeight) + 'px' }"
+      >
+        <view 
+            class="tab-item" 
+            v-for="(tab, index) in tabs" 
+            :key="index"
+            :class="{ active: currentTab === index }"
+            @click="currentTab = index"
+        >
+            <text class="tab-text">{{ tab }}</text>
+            <image 
+                v-if="currentTab === index" 
+                class="tab-brush" 
+                src="/static/images/market/ui-tab-active.png" 
+                mode="aspectFit" 
+            />
+        </view>
+      </view>
+
+      <view class="product-grid">
+        <view class="product-card" v-for="(item, index) in products" :key="index">
+            <view class="card-img-box">
+                <image class="prod-img" :src="item.img" mode="aspectFit" />
+            </view>
+            <view class="card-info">
+                <text class="prod-title">{{ item.name }}</text>
+                <view class="prod-tags">
+                    <text class="tag">{{ item.tag }}</text>
+                </view>
+                <view class="prod-footer">
+                    <text class="price"><text class="symbol">¥</text>{{ item.price }}</text>
+                    
+                    <image 
+                        class="btn-buy vintage-filter" 
+                        src="/static/images/market/btn-buy-seal.png" 
+                        @click.stop="handleBuy(item)"
+                    />
+                </view>
+            </view>
+        </view>
+      </view>
+
+      <view class="footer-spacer">
+          <view class="footer-fade"></view>
+      </view>
+
     </scroll-view>
 
-    <!-- Custom TabBar -->
     <CustomTabBar current-path="/pages/market/index" />
   </view>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import CustomTabBar from '@/components/CustomTabBar.vue';
 
-const safeAreaTop = uni.getSystemInfoSync().statusBarHeight || 20;
+const safeAreaTop = ref(20);
+const navHeight = ref(32);
+const currentTab = ref(0);
+const tabs = ['全部', '案头趣玩', '随身好物'];
 
-// 1. Categories
-const categories = ['全部', '案头趣玩', '随身好物'];
-const currentCatIndex = ref(0);
+const products = ref([
+    { name: '透光·亚克力立牌', price: '19.9', tag: '热销', img: '/static/images/market/sku-placeholder.png' },
+    { name: '皮影·原色帆布袋', price: '29.9', tag: '实用', img: '/static/images/market/sku-placeholder.png' },
+    { name: '掐丝·金属胸针', price: '15.0', tag: '精致', img: '/static/images/market/sku-placeholder.png' },
+    { name: '千片·光影拼图', price: '49.0', tag: '礼盒', img: '/static/images/market/sku-placeholder.png' },
+    { name: '皮影·磁吸冰箱贴', price: '12.0', tag: '有趣', img: '/static/images/market/sku-placeholder.png' },
+    { name: '大闹天宫·主题T恤', price: '59.0', tag: '上新', img: '/static/images/market/sku-placeholder.png' },
+]);
 
-// 2. The 5 Boutique SKUs (Based on User Design)
-const allProducts = [
-  { id: 1, title: '透光·亚克力立牌', price: '19.9', tags: ['热销', '可定制'], category: '案头趣玩', color: '#E3F2FD' },
-  { id: 2, title: '皮影·原色帆布袋', price: '29.9', tags: ['实用'], category: '随身好物', color: '#F3E5F5' },
-  { id: 3, title: '掐丝·金属胸针', price: '15.0', tags: [], category: '随身好物', color: '#FFF3E0' },
-  { id: 4, title: '千片·光影拼图', price: '49.0', tags: ['礼盒'], category: '案头趣玩', color: '#E8F5E9' },
-  { id: 5, title: '皮影·磁吸冰箱贴', price: '12.0', tags: [], category: '案头趣玩', color: '#FFEBEE' }
-];
+// --- FIX: Fake Buy Interaction ---
+const handleBuy = (item) => {
+    uni.showModal({
+        title: '感谢雅赏',
+        content: `感谢您对非遗文创的喜爱！\n此为【挑战杯】参赛演示项目，暂未接入银号（支付系统）。\n\n您的每一次点击，都是对皮影艺术最大的支持！`,
+        showCancel: false,
+        confirmText: '心意收下',
+        confirmColor: '#B22222'
+    });
+};
 
-// 3. Filter Logic
-const displayProducts = computed(() => {
-  if (currentCatIndex.value === 0) return allProducts;
-  const targetCat = categories[currentCatIndex.value];
-  return allProducts.filter(p => p.category === targetCat);
+onMounted(() => {
+    const menuButton = uni.getMenuButtonBoundingClientRect();
+    if (menuButton) {
+        safeAreaTop.value = menuButton.top;
+        navHeight.value = menuButton.height;
+    }
 });
-
-const switchCat = (index) => {
-  currentCatIndex.value = index;
-};
-
-const buyItem = (item) => {
-  uni.showToast({ title: `已兑换: ${item.title}`, icon: 'success' });
-};
 </script>
 
 <style lang="scss" scoped>
+/* 1. Global Dark Theme */
 .market-container {
-  height: 100vh;
-  background-color: #F7F5F0;
-  display: flex;
-  flex-direction: column;
+    width: 100vw; height: 100vh; position: relative; 
+    background-color: #1A120B; 
+}
+.bg-dark {
+    position: absolute; width: 100%; height: 100%; z-index: 0;
+    background-color: #1A120B; 
 }
 
 /* Navbar */
 .custom-navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 100;
-  background-color: rgba(247, 245, 240, 0.95);
-  backdrop-filter: blur(10px);
-  
-  .nav-content {
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .page-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-  }
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+    background: rgba(26, 18, 11, 0.85); /* Slightly more opaque for readability */
+    backdrop-filter: blur(10px);
+}
+.nav-title {
+    text-align: center; color: #E0D6C3; 
+    font-weight: 600; font-size: 17px; letter-spacing: 1px;
 }
 
-.scroll-content {
-  flex: 1;
-}
+.scroll-content { height: 100vh; }
 
-/* Hero Banner */
-.hero-banner {
-  width: 100%;
-  aspect-ratio: 16/9;
-  background-color: #e0e0e0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Banner */
+.hero-banner { 
+    position: relative; width: 100%; 
+    height: 320px; /* Increased height slightly */
+    margin-top: -80px; 
 }
-
-.banner-placeholder {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #ddd, #eee);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
+.banner-img { width: 100%; height: 100%; opacity: 0.8; }
 .banner-text {
-  font-size: 24px;
-  font-weight: bold;
-  color: #999;
-  letter-spacing: 4px;
+    position: absolute; bottom: 60px; left: 24px; display: flex; flex-direction: column; z-index: 2;
+}
+.slogan-main { 
+    font-size: 28px; color: #FFD700; 
+    font-weight: bold; letter-spacing: 4px; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+.slogan-sub { font-size: 14px; color: rgba(255,255,255,0.8); letter-spacing: 2px; margin-top: 8px; }
+
+.banner-fade {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 120px;
+    /* Improved gradient: Ends in solid dark to cover bottom of image */
+    background: linear-gradient(to top, #1A120B 20%, transparent);
+    z-index: 1;
 }
 
-/* Sticky Tabs */
+/* FIX: Sticky Tabs */
 .sticky-tabs {
-  position: sticky;
-  z-index: 90;
-  display: flex;
-  justify-content: space-around;
-  background-color: #F7F5F0;
-  padding: 15px 0;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: flex; gap: 30px; padding: 10px 24px;
+    
+    /* Critical Fix for Sticky */
+    position: sticky; 
+    /* 'top' is set dynamically in template */
+    z-index: 90;
+    
+    background: #1A120B; /* Solid background to hide content scrolling behind */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* Shadow for separation */
+    
+    /* FIX: Negative margin to pull it UP into the banner area */
+    margin-top: -20px; 
+    border-radius: 20px 20px 0 0; /* Rounded top corners like a sheet */
 }
 
 .tab-item {
-  font-size: 16px;
-  color: #666;
-  padding-bottom: 5px;
-  position: relative;
-  
-  &.active {
-    color: #333;
-    font-weight: bold;
-    
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 20px;
-      height: 3px;
-      background-color: #D32F2F;
-      border-radius: 2px;
-    }
-  }
+    position: relative; padding: 6px 4px; display: flex; align-items: center; justify-content: center;
+}
+.tab-text {
+    font-size: 15px; color: #888; z-index: 2; transition: all 0.3s;
+}
+.tab-item.active .tab-text {
+    color: #E0D6C3; font-weight: bold; font-size: 17px; 
+}
+.tab-brush {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 20px; z-index: 1; opacity: 0.8;
 }
 
-/* Product Grid */
+/* Grid */
 .product-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  padding: 15px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px 20px;
+    background: #1A120B; /* Ensure solid background */
 }
-
 .product-card {
-  background-color: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
+    background: #2C241E; 
+    border: 1px solid rgba(255, 255, 255, 0.05); 
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.card-img-box { 
+    width: 100%; height: 170px; display: flex; align-items: center; justify-content: center; 
+    background: #231B16; 
+}
+.prod-img { width: 60%; height: 60%; opacity: 0.8; }
+
+.card-info { padding: 12px; }
+.prod-title { font-size: 14px; color: #E0D6C3; font-weight: 600; margin-bottom: 6px; display: block;}
+.prod-tags { display: flex; margin-bottom: 10px; }
+.tag { 
+    font-size: 10px; color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.3); 
+    padding: 2px 6px; border-radius: 4px; 
+}
+.prod-footer { display: flex; justify-content: space-between; align-items: center; }
+.price { color: #FFD700; font-size: 18px; font-weight: bold; .symbol{ font-size: 12px; margin-right: 1px;} }
+
+/* FIX: Vintage Filter for Button */
+.btn-buy { 
+    width: 36px; height: 36px; 
+}
+.vintage-filter {
+    opacity: 0.85; /* Reduce brightness */
+    filter: sepia(0.3) contrast(0.9); /* Add brownish tone */
+    transform: scale(0.9); /* Slightly smaller */
 }
 
-.card-image {
-  width: 100%;
-  aspect-ratio: 1;
-  background-color: #f5f5f5;
+/* Footer Spacer */
+.footer-spacer {
+    height: 140px; position: relative;
 }
-
-.card-info {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.card-title {
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
-}
-
-.card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-bottom: 10px;
-  
-  .tag {
-    font-size: 10px;
-    color: #D32F2F;
-    border: 1px solid #D32F2F;
-    padding: 1px 4px;
-    border-radius: 4px;
-  }
-}
-
-.card-footer {
-  margin-top: auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.price {
-  font-size: 16px;
-  font-weight: bold;
-  color: #D32F2F;
-}
-
-.btn-buy {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: #FFD700;
-  color: #333;
-  font-size: 12px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 5px rgba(255, 215, 0, 0.4);
+.footer-fade {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to bottom, transparent 0%, #1A120B 100%);
 }
 </style>

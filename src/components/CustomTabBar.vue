@@ -1,64 +1,105 @@
 <template>
   <view class="tabbar-container">
-    <view class="tabbar-bg"></view>
-    <view 
-      class="tab-item" 
-      v-for="(item, index) in tabList" 
-      :key="index" 
-      @click="switchTab(item.path)" 
-    >
-      <text class="tab-text" :class="{ active: currentPath === item.path }">
-        {{ item.name }}
-      </text>
+    
+    <image 
+      class="bg-img" 
+      src="/static/images/tabbar/bg-tabbar-clouds.png.jpg" 
+      mode="scaleToFill" 
+    ></image>
+
+    <view class="dark-overlay"></view>
+
+    <view class="tabbar-content">
+      <view 
+        v-for="(item, index) in tabList" 
+        :key="index" 
+        class="tab-item"
+        @click="switchTab(item.pagePath)"
+      >
+        <view class="icon-wrapper">
+            <image 
+                class="tab-icon" 
+                :src="currentPath === item.pagePath ? item.iconOn : item.iconOff" 
+                mode="aspectFit"
+            ></image>
+            <view v-if="currentPath === item.pagePath" class="active-glow"></view>
+        </view>
+        
+        <text 
+            class="tab-text" 
+            :class="{ 'active': currentPath === item.pagePath }"
+        >{{ item.text }}</text>
+      </view>
     </view>
   </view>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-
 const props = defineProps({
-  currentPath: { type: String, default: '' }
+  currentPath: { type: String, default: '/pages/index/index' }
 });
 
+// 数据配置：严格匹配你的文件名
 const tabList = [
-  { name: '大厅', path: '/pages/index/index' },
-  { name: '工坊', path: '/pages/workshop/index' },
-  { name: '剧场', path: '/pages/theater/index' },
-  { name: '影卷', path: '/pages/wiki/menu' },
-  { name: '集市', path: '/pages/market/index' }
+  { pagePath: '/pages/index/index', text: '大厅', iconOff: '/static/images/tabbar/tab-icon-hall-off.png.png', iconOn: '/static/images/tabbar/tab-icon-hall-on.png.png' },
+  { pagePath: '/pages/workshop/index', text: '工坊', iconOff: '/static/images/tabbar/tab-icon-workshop-off.png.png', iconOn: '/static/images/tabbar/tab-icon-workshop-on.png.png' },
+  { pagePath: '/pages/theater/index', text: '剧场', iconOff: '/static/images/tabbar/tab-icon-theater-off.png.png', iconOn: '/static/images/tabbar/tab-icon-theater-on.png.png' },
+  { pagePath: '/pages/wiki/menu', text: '影卷', iconOff: '/static/images/tabbar/tab-icon-wiki-off.png.png', iconOn: '/static/images/tabbar/tab-icon-wiki-on.png.png' },
+  { pagePath: '/pages/market/index', text: '集市', iconOff: '/static/images/tabbar/tab-icon-market-off.png.png', iconOn: '/static/images/tabbar/tab-icon-market-on.png.png' }
 ];
 
 const switchTab = (path) => {
-  // Use switchTab for TabBar pages as configured in pages.json
-  // Although the user prompt suggested reLaunch, for actual TabBar pages switchTab is usually correct/required.
-  // However, the user prompt explicitly requested: "Use reLaunch to clear stack and ensure clean navigation"
-  // I will follow the user's specific instruction to use reLaunch, assuming they might want to override standard behavior or are using this component in a specific way.
-  // Wait, if pages are defined in tabBar in pages.json, reLaunch might fail or behave oddly? 
-  // Actually, reLaunch works for any page including tabs. It fully reloads the app.
-  // Given the explicit instruction "Use reLaunch", I will use it.
   uni.reLaunch({ url: path });
 };
 </script>
 
 <style lang="scss" scoped>
 .tabbar-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 80px; /* Safe area included */
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 999;
-  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-  padding-bottom: constant(safe-area-inset-bottom);
-  padding-bottom: env(safe-area-inset-bottom);
+  position: fixed; bottom: 0; left: 0; width: 100%; height: 120px; z-index: 999; pointer-events: none; 
 }
-.tab-text {
-  color: #999;
-  font-size: 14px;
-  &.active { color: #FFD700; font-weight: bold; }
+
+/* 背景图片铺满 */
+.bg-img {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; z-index: 0;
 }
+
+/* 黑色渐变遮罩：解决“白云吃白字”的问题 */
+.dark-overlay {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(30,30,30,0.7) 60%, transparent 100%);
+}
+
+/* 图标文字内容 */
+.tabbar-content {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; 
+  z-index: 2; /* 确保内容在最上层 */
+  display: flex; justify-content: space-around; align-items: flex-end; 
+  /* 核心布局修复：通过 padding-bottom 把图标顶上去，离开底部边缘 */
+  padding-bottom: 35px; 
+  pointer-events: auto; 
+}
+
+.tab-item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; 
+  margin-bottom: 10px; 
+}
+
+.icon-wrapper {
+  position: relative; width: 32px; height: 32px; margin-bottom: 4px; 
+  display: flex; justify-content: center; align-items: center; 
+}
+.tab-icon { width: 100%; height: 100%; } 
+
+/* 选中态背后的光晕 */
+.active-glow { 
+  position: absolute; width: 44px; height: 44px; 
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%); z-index: -1; 
+} 
+
+.tab-text { 
+  font-size: 11px; color: rgba(255, 255, 255, 0.8); transition: all 0.3s; letter-spacing: 1px; 
+  text-shadow: 0 1px 3px rgba(0,0,0,1); 
+  
+  &.active { color: #FFD700; font-weight: bold; text-shadow: 0 0 5px rgba(255, 215, 0, 0.6); } 
+} 
 </style>

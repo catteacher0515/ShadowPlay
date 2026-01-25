@@ -1,331 +1,133 @@
-<template>
-  <view class="container">
-    <!-- Layer 1: Background & Curtains -->
-    <view class="layer-bg">
-      <view class="curtain left"></view>
-      <view class="curtain right"></view>
-    </view>
-
-    <!-- Layer 2: Stage -->
-    <view class="layer-stage">
-      <view class="stage-area">
-        <view class="character-block breathing">
-          <text>孙悟空 (Idle)</text>
-        </view>
-        <view class="character-block breathing delay">
-          <text>白骨精 (Idle)</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- Layer 3: HUD -->
-    <view class="layer-hud">
-      <view class="header-left">
-        <view class="avatar"></view>
-        <view class="bgm-toggle" @click="toggleBgm">
-          <text>{{ isBgmPlaying ? '🔔' : '🔕' }}</text>
-        </view>
-      </view>
-      <view class="header-center">
-        <text class="logo-text">云上·皮影</text>
-      </view>
-    </view>
-
-    <!-- Layer 4: Foreground Props -->
-    <view class="layer-foreground">
-      <view class="daily-sign-btn" @click="goToDaily">
-        <text>拾影·日签</text>
-      </view>
-    </view>
-
-    <!-- Layer 5: Custom TabBar -->
-    <CustomTabBar current-path="/pages/index/index" />
-  </view>
-</template>
-
-<script setup>
-import { ref, onMounted } from 'vue'
-import CustomTabBar from '@/components/CustomTabBar.vue'
-
-// State
-const isBgmPlaying = ref(true)
-
-// Lifecycle
-onMounted(() => {
-  // uni.hideTabBar() // Removed to avoid error, as native tabbar is not used
-})
-
-// Methods
-const toggleBgm = () => {
-  isBgmPlaying.value = !isBgmPlaying.value
-  console.log('BGM Toggled:', isBgmPlaying.value)
-}
-
-const goToDaily = () => {
-  console.log("Navigating to Daily Page..."); // Debug log
-  uni.navigateTo({
-    url: '/pages/wiki/daily',
-    fail: (err) => {
-      console.error("Navigation failed:", err);
-      // Fallback if the path is wrong
-      uni.showToast({ title: '页面路径错误', icon: 'none' });
-    }
-  });
-}
-
-// --- Fixed Function ---
-const switchTab = (item) => {
-  // 1. Update State (Use 'currentTab', NOT 'activeTab')
-  currentTab.value = item.key;
-
-  // 2. Get the target path
-  const url = item.path;
-
-  console.log(`Switching Tab to: ${url}`);
-
-  // 3. Use switchTab for TabBar pages
-  uni.switchTab({
-    url: url,
-    success: () => {
-      console.log('Tab switch successful');
-    },
-    fail: (err) => {
-      console.error('SwitchTab failed:', err);
-      // Fallback: If for some reason it's NOT a tab page, try navigateTo
-      // This makes the code robust for both types
-      uni.navigateTo({
-        url: url,
-        fail: (navErr) => {
-           console.error('NavigateTo also failed:', navErr);
-           uni.showToast({ title: '无法跳转', icon: 'none' });
-        }
-      });
-    }
-  });
-};
-</script>
-
-<style lang="scss" scoped>
-/* Variables */
-$gold-color: #FFD700;
-$bg-dark: #2C1608;
-$text-light: #F7F5F0;
-
-.container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background-color: $bg-dark;
-}
-
-/* Layer 1: Background & Curtains */
-.layer-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at center, rgba($gold-color, 0.3) 0%, $bg-dark 80%);
-  z-index: 1;
-}
-
-.curtain {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 15%;
-  background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
-  z-index: 1;
-  
-  &.left {
-    left: 0;
-    border-right: 1px solid rgba($gold-color, 0.1);
-  }
-  
-  &.right {
-    right: 0;
-    background: linear-gradient(to left, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
-    border-left: 1px solid rgba($gold-color, 0.1);
-  }
-}
-
-/* Layer 2: Stage */
-.layer-stage {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  padding-bottom: 100px; /* Make space for foreground/tabbar */
-}
-
-.stage-area {
-  display: flex;
-  gap: 40px;
-}
-
-.character-block {
-  width: 100px;
-  height: 150px;
-  border: 2px dashed rgba($gold-color, 0.5);
-  background-color: rgba(0,0,0,0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $text-light;
-  font-size: 14px;
-  text-align: center;
-  
-  &.breathing {
-    animation: breathe 3s infinite ease-in-out;
-  }
-  
-  &.delay {
-    animation-delay: 1.5s;
-  }
-}
-
-/* Layer 3: HUD */
-.layer-hud {
-  position: absolute;
-  top: var(--status-bar-height);
-  left: 0;
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-  z-index: 3;
-  display: flex;
-  justify-content: space-between;
-}
-
-.header-left {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid $gold-color;
-  background-color: #555;
-}
-
-.bgm-toggle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba($gold-color, 0.5);
-}
-
-.header-center {
-  position: absolute;
-  left: 50%;
-  top: 40px;
-  transform: translateX(-50%);
-}
-
-.logo-text {
-  writing-mode: vertical-rl;
-  font-size: 24px;
-  color: $gold-color;
-  font-weight: bold;
-  letter-spacing: 5px;
-  text-shadow: 0 0 10px rgba($gold-color, 0.5);
-}
-
-/* Layer 4: Foreground Props */
-.layer-foreground {
-  position: absolute;
-  bottom: 120px; /* Above TabBar */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 4;
-}
-
-.daily-sign-btn {
-  background-color: #A52A2A;
-  color: $text-light;
-  padding: 10px 20px;
-  border-radius: 4px;
-  border: 1px solid $gold-color;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-  font-size: 16px;
-  font-weight: bold;
-}
-
-/* Layer 5: Custom TabBar */
-.custom-tabbar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 80px;
-  padding-bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */
-  padding-bottom: env(safe-area-inset-bottom); /* iOS 11.2+ */
-  background: linear-gradient(to top, #000000 0%, rgba(0,0,0,0.8) 100%);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 5;
-  border-top: 1px solid rgba($gold-color, 0.2);
-}
-
-.tab-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  opacity: 0.6;
-  transition: all 0.3s;
-  
-  &.active {
-    opacity: 1;
-    transform: scale(1.1);
-    
-    .tab-text {
-      color: $gold-color;
-    }
-    
-    .tab-icon {
-      border-color: $gold-color;
-      background-color: rgba($gold-color, 0.2);
-    }
-  }
-}
-
-.tab-icon {
-  width: 24px;
-  height: 24px;
-  border: 1px solid #999;
-  margin-bottom: 4px;
-  border-radius: 4px;
-}
-
-.tab-text {
-  font-size: 12px;
-  color: #999;
-}
-
-/* Animations */
-@keyframes breathe {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
-}
-</style>
+<template> 
+   <view class="main-hall-container"> 
+     
+     <image class="bg-stage" src="/static/images/index/bg-stage-screen.jpg" mode="aspectFill" /> 
+     <view class="stage-performance"> 
+        <image class="actor-wukong animate-breath" src="/static/images/char/char-wukong-pose-idle.png" /> 
+        <image class="actor-skeleton animate-breath-delayed" src="/static/images/char/char-skeleton-pose-idle.png" /> 
+     </view> 
+     <image class="fg-curtain" src="/static/images/index/curtain-frame.jpg.jpg" mode="aspectFill" /> 
+ 
+     <view class="custom-navbar" :style="{ top: navTop + 'px', height: navHeight + 'px' }"> 
+       
+       <view class="nav-left" :style="{ height: navHeight + 'px', width: navHeight + 'px' }" @click="goToProfile"> 
+          <view class="avatar-box"> 
+             <image class="avatar-frame" src="/static/images/index/avatar-frame-cloud.png" /> 
+             <view class="avatar-placeholder" v-if="!userInfo.avatarUrl"></view> 
+             <image class="user-avatar" :src="userInfo.avatarUrl" v-else /> 
+          </view> 
+       </view> 
+ 
+       <view class="nav-center" :style="{ lineHeight: navHeight + 'px' }"> 
+         <text class="app-name">云上·皮影</text> 
+       </view> 
+ 
+     </view> 
+ 
+     <view class="floating-controls" :style="{ top: (navTop + navHeight + 30) + 'px' }"> 
+        <view class="bgm-control" @click="toggleBGM"> 
+           <image 
+              class="bgm-icon" 
+              src="/static/images/index/icon-btn-bgm-gong.png.png" 
+              :class="{ 'animate-spin': isBgmOn }" 
+           /> 
+        </view> 
+     </view> 
+ 
+     <CustomTabBar current-path="/pages/index/index" /> 
+ 
+   </view> 
+ </template> 
+ 
+ <script setup> 
+ import { ref, onMounted } from 'vue'; 
+ import CustomTabBar from '@/components/CustomTabBar.vue'; 
+ 
+ // --- Layout Calculation --- 
+ const navTop = ref(0); 
+ const navHeight = ref(32); // Default fallback 
+ 
+ onMounted(() => { 
+   // Get WeChat Capsule Position 
+   const menuButton = uni.getMenuButtonBoundingClientRect(); 
+   if (menuButton) { 
+     navTop.value = menuButton.top; 
+     navHeight.value = menuButton.height; 
+   } else { 
+     // Fallback for H5/Other 
+     navTop.value = (uni.getSystemInfoSync().statusBarHeight || 20) + 4; 
+   } 
+ }); 
+ 
+ // --- Logic --- 
+ const isBgmOn = ref(true); 
+ const userInfo = ref({ avatarUrl: '' }); // Replace with real store data later 
+ 
+ const toggleBGM = () => { 
+   isBgmOn.value = !isBgmOn.value; 
+ }; 
+ 
+ const goToProfile = () => { 
+   uni.navigateTo({ url: '/pages/profile/index' }); 
+ }; 
+ </script> 
+ 
+ <style lang="scss" scoped> 
+ .main-hall-container { 
+   width: 100vw; height: 100vh; position: relative; overflow: hidden; 
+   background-color: #2C1608; 
+ } 
+ 
+ /* Backgrounds */ 
+ .bg-stage { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; } 
+ .stage-performance { position: absolute; inset: 0; z-index: 1; display: flex; justify-content: center; align-items: center; } 
+ .fg-curtain { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; mix-blend-mode: multiply; } 
+ 
+ /* Custom Navbar (Z-Index 10) */ 
+ .custom-navbar { 
+   position: absolute; left: 0; width: 100%; z-index: 10; 
+   display: flex; justify-content: center; /* Center Title */ 
+   pointer-events: none; /* Let touches pass through empty areas */ 
+ } 
+ 
+ /* Avatar Box */ 
+ .nav-left { 
+   position: absolute; left: 15px; top: 0; 
+   display: flex; align-items: center; justify-content: center; 
+   pointer-events: auto; 
+ } 
+ .avatar-box { 
+   width: 100%; height: 100%; /* Fill the nav height square */ 
+   position: relative; 
+   transform: scale(0.9); /* Slight shrink to fit nicely */ 
+ } 
+ .avatar-frame { width: 100%; height: 100%; position: absolute; z-index: 2; } 
+ .avatar-placeholder { width: 76%; height: 76%; background: rgba(0,0,0,0.3); border-radius: 50%; position: absolute; top: 12%; left: 12%; } 
+ .user-avatar { width: 76%; height: 76%; border-radius: 50%; position: absolute; top: 12%; left: 12%; z-index: 1; } 
+ 
+ /* Title */ 
+ .nav-center { 
+   height: 100%; 
+   display: flex; align-items: center; 
+ } 
+ .app-name { 
+   font-size: 17px; /* Standard WeChat Title Size */ 
+   font-weight: 600; 
+   color: #FFFFFF; 
+   letter-spacing: 1px; 
+   text-shadow: 0 1px 2px rgba(0,0,0,0.3); 
+ } 
+ 
+ /* Floating Controls (Gong) */ 
+ .floating-controls { 
+   position: absolute; left: 15px; /* Aligned with avatar left */ 
+   z-index: 10; 
+   pointer-events: auto; 
+ } 
+ .bgm-control { 
+   /* No more overlap constraints */ 
+ } 
+ .bgm-icon { width: 40px; height: 40px; opacity: 0.9; } 
+ 
+ @keyframes spin { 100% { transform: rotate(360deg); } } 
+ </style>
