@@ -56,8 +56,8 @@
         "navigationStyle": "custom"
       }
     },
-    {
-      "path": "pages/wiki/music",
+  {
+      "path": "pages/wiki/vocal",
       "style": {
         "navigationBarTitleText": "唱腔·特色",
         "navigationStyle": "custom"

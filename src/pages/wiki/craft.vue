@@ -1,244 +1,220 @@
-<template>
-  <view class="craft-container">
-    <!-- Custom Back Button -->
-    <view class="back-btn" :style="{ top: safeAreaTop + 'px' }" @click="goBack">
-      <text class="back-icon">←</text>
-    </view>
-
-    <swiper 
-      class="craft-swiper" 
-      vertical 
-      circular
-      :current="currentStep"
-      @change="onChange"
-    >
-      <swiper-item v-for="(step, index) in steps" :key="index">
-        <view class="slide-item" :style="{ backgroundColor: step.color }">
-          <!-- Gradient Overlay -->
-          <view class="slide-overlay"></view>
-          
-          <!-- Content Info -->
-          <view class="info-section">
-            <text class="step-index">第 {{ toChineseNum(index + 1) }} 道工序</text>
-            <text class="step-name">{{ step.name }}</text>
-            <text class="step-desc">{{ step.desc }}</text>
-          </view>
-          
-          <!-- Audio Trigger -->
-          <view v-if="step.hasAudio" class="audio-trigger" @click="playAudio">
-            <view class="pulse-ring"></view>
-            <text class="audio-icon">🔊</text>
-            <text class="audio-text">听·刀锋入皮</text>
-          </view>
-        </view>
-      </swiper-item>
-    </swiper>
-
-    <!-- Side Indicator -->
-    <view class="side-indicator">
-      <view 
-        v-for="(step, index) in steps" 
-        :key="index"
-        class="indicator-dot"
-        :class="{ active: currentStep === index }"
-      ></view>
-    </view>
-  </view>
-</template>
-
-<script setup>
-import { ref, onUnmounted } from 'vue';
-
-const safeAreaTop = (uni.getSystemInfoSync().statusBarHeight || 20) + 10;
-const currentStep = ref(0);
-const audioContext = uni.createInnerAudioContext();
-// Mock audio src (using a short sound effect URL or placeholder)
-audioContext.src = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'; 
-
-const steps = [
-  { name: '选皮', desc: '取驴皮之韧，去毛刮脂', color: '#D7CCC8' }, // 模拟腊感
-  { name: '制皮', desc: '浸泡推刮，薄如蝉翼', color: '#BCAAA4' },
-  { name: '描样', desc: '钢针游走，入木三分', color: '#A1887F' },
-  { name: '雕刻', desc: '推皮走刀，千刻不乱', color: '#8D6E63', hasAudio: true },
-  { name: '敷彩', desc: '红绿点染，通透如玉', color: '#EF5350' }, // 模拟红宝石色
-  { name: '熨烫', desc: '高温定型，平整如镜', color: '#795548' },
-  { name: '罩漆', desc: '清漆封固，历久弥新', color: '#5D4037' },
-  { name: '缀结', desc: '丝弦连结，灵活自如', color: '#4E342E' }
-];
-
-const onChange = (e) => {
-  currentStep.value = e.detail.current;
-  // Stop audio if user swipes away from engraving step (index 3)
-  if (currentStep.value !== 3) {
-    audioContext.stop();
-  }
-};
-
-const playAudio = () => {
-  audioContext.play();
-  uni.showToast({ title: '刀声响起...', icon: 'none' });
-};
-
-const goBack = () => {
-  uni.navigateBack();
-};
-
-const toChineseNum = (num) => {
-  const cnNums = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
-  return cnNums[num] || num;
-};
-
-// Cleanup
-onUnmounted(() => {
-  audioContext.destroy();
-});
-</script>
-
-<style lang="scss" scoped>
-.craft-container {
-  width: 100vw;
-  height: 100vh;
-  background-color: black;
-  position: relative;
-}
-
-.back-btn {
-  position: absolute;
-  left: 20px;
-  z-index: 100;
-  width: 40px;
-  height: 40px;
-  background-color: rgba(0,0,0,0.3);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(5px);
-}
-
-.back-icon {
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.craft-swiper {
-  width: 100%;
-  height: 100%;
-}
-
-.slide-item {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.slide-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 40%, transparent 100%);
-  pointer-events: none;
-}
-
-.info-section {
-  position: relative;
-  z-index: 10;
-  padding: 0 40px 100px 40px;
-  color: white;
-}
-
-.step-index {
-  display: block;
-  font-size: 14px;
-  color: #FFD700;
-  margin-bottom: 10px;
-  letter-spacing: 2px;
-}
-
-.step-name {
-  display: block;
-  font-size: 48px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  font-family: serif;
-  letter-spacing: 5px;
-}
-
-.step-desc {
-  font-size: 16px;
-  opacity: 0.8;
-  font-family: serif;
-  letter-spacing: 1px;
-  line-height: 1.6;
-}
-
-/* Audio Trigger */
-.audio-trigger {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.audio-icon {
-  font-size: 40px;
-  background-color: rgba(255,255,255,0.2);
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255,255,255,0.4);
-  animation: pulse 2s infinite;
-}
-
-.audio-text {
-  color: rgba(255,255,255,0.8);
-  font-size: 12px;
-  letter-spacing: 2px;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-  70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); }
-  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-}
-
-/* Side Indicator */
-.side-indicator {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  z-index: 20;
-}
-
-.indicator-dot {
-  width: 2px;
-  height: 15px;
-  background-color: rgba(255,255,255,0.3);
-  transition: all 0.3s;
-  
-  &.active {
-    height: 30px;
-    background-color: #FFD700;
-    width: 3px;
-  }
-}
-</style>
+<template> 
+   <view class="craft-container"> 
+     
+     <swiper 
+       class="fullscreen-swiper" 
+       vertical 
+       circular 
+       @change="onSwiperChange" 
+     > 
+       <swiper-item v-for="(step, index) in steps" :key="step.id"> 
+         <view class="slide-item"> 
+           <image 
+             class="bg-img" 
+             :src="step.src" 
+             mode="aspectFill" 
+           /> 
+           
+           <view class="overlay-gradient"> 
+             <view class="step-info"> 
+               <view class="step-header"> 
+                 <text class="step-num">0{{ step.id }}</text> 
+                 <view class="step-titles"> 
+                   <text class="title-cn">{{ step.title }}</text> 
+                   <text class="title-en">{{ step.en }}</text> 
+                 </view> 
+               </view> 
+               <text class="step-desc">{{ step.desc }}</text> 
+             </view> 
+           </view> 
+         </view> 
+       </swiper-item> 
+     </swiper> 
+ 
+     <!-- Fixed UI Elements --> 
+     <view class="nav-back" :style="{ top: safeAreaTop + 'px' }" @click="goBack"> 
+       <text class="back-icon">←</text> 
+     </view> 
+ 
+     <view class="swipe-hint" v-if="currentIndex < 7"> 
+       <view class="arrow-up"></view> 
+       <text class="hint-text">上滑查看工序</text> 
+     </view> 
+ 
+   </view> 
+ </template> 
+ 
+ <script setup> 
+ import { ref, onMounted } from 'vue'; 
+ 
+ const safeAreaTop = ref(40); 
+ const currentIndex = ref(0); 
+ 
+ const steps = [ 
+   { 
+     id: 1, 
+     title: '选皮', 
+     en: 'Selecting', 
+     desc: '严选关中秦川驴皮，皮质厚实坚韧。背光透视，需如琥珀般通透无瑕，方为上品。', 
+     src: '/static/images/wiki/craft/bg-proc-01.jpg.png' 
+   }, 
+   { 
+     id: 2, 
+     title: '制皮', 
+     en: 'Preparing', 
+     desc: '月牙刀推刮去毛，净除油脂。这是力与柔的博弈，直至皮板薄如蝉翼，润如凝脂。', 
+     src: '/static/images/wiki/craft/bg-proc-02.jpg.png' 
+   }, 
+   { 
+     id: 3, 
+     title: '画稿', 
+     en: 'Drawing', 
+     desc: '墨笔勾勒，落笔生神。通天鼻、凤眼、额头平扁，三笔定乾坤，绘出皮影灵魂。', 
+     src: '/static/images/wiki/craft/bg-proc-03.jpg.png' 
+   }, 
+   { 
+     id: 4, 
+     title: '过稿', 
+     en: 'Tracing', 
+     desc: '钢针代替画笔，在皮面上扎出千万针孔。不留墨迹，只留针痕，为雕刻定下精密坐标。', 
+     src: '/static/images/wiki/craft/bg-proc-04.jpg.png' 
+   }, 
+   { 
+     id: 5, 
+     title: '镂刻', 
+     en: 'Carving', 
+     desc: '推皮走刀，刀停皮转。指尖毫厘之间，刻出万千气象。讲究圆转如意，严丝合缝。', 
+     src: '/static/images/wiki/craft/bg-proc-05.jpg.png' 
+   }, 
+   { 
+     id: 6, 
+     title: '敷彩', 
+     en: 'Coloring', 
+     desc: '双面点染，色透肌理。红绿重彩入皮三分，灯光映照下，如红宝石般熠熠生辉。', 
+     src: '/static/images/wiki/craft/bg-proc-06.jpg.png' 
+   }, 
+   { 
+     id: 7, 
+     title: '发汗', 
+     en: 'Ironing', 
+     desc: '高温熨烫，脱胎换骨。热压瞬间，皮内水分蒸腾，色泽由雾面瞬间转为晶莹剔透。', 
+     src: '/static/images/wiki/craft/bg-proc-07.jpg.png' 
+   }, 
+   { 
+     id: 8, 
+     title: '钉缀', 
+     en: 'Assembling', 
+     desc: '丝线穿结，骨肉相连。颈、肩、肘、腕、膝，巧设关节，赋予皮影灵动的生命。', 
+     src: '/static/images/wiki/craft/bg-proc-08.jpg.png' 
+   } 
+ ]; 
+ 
+ const onSwiperChange = (e) => { 
+   currentIndex.value = e.detail.current; 
+ }; 
+ 
+ const goBack = () => { 
+   uni.navigateBack(); 
+ }; 
+ 
+ onMounted(() => { 
+   const menuButton = uni.getMenuButtonBoundingClientRect(); 
+   if (menuButton) { 
+     safeAreaTop.value = menuButton.top; 
+   } 
+ }); 
+ </script> 
+ 
+ <style lang="scss" scoped> 
+ .craft-container { 
+   width: 100vw; height: 100vh; background-color: #000; position: relative; 
+ } 
+ 
+ .fullscreen-swiper { 
+   width: 100%; height: 100%; 
+ } 
+ 
+ .slide-item { 
+   width: 100%; height: 100%; position: relative; 
+ } 
+ 
+ .bg-img { 
+   width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 0; 
+ } 
+ 
+ /* Gradient Overlay for Text Readability */ 
+ .overlay-gradient { 
+   position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; 
+   background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%); 
+   z-index: 1; 
+   display: flex; align-items: flex-end; 
+ } 
+ 
+ .step-info { 
+   padding: 0 30px 60px 30px; 
+   color: #fff; 
+ } 
+ 
+ .step-header { 
+   display: flex; align-items: center; margin-bottom: 16px; 
+ } 
+ 
+ .step-num { 
+   font-size: 60px; font-weight: bold; color: rgba(255, 215, 0, 0.3); /* Transparent Gold */ 
+   margin-right: 15px; font-family: 'Impact', sans-serif; 
+   line-height: 1; 
+ } 
+ 
+ .step-titles { 
+   display: flex; flex-direction: column; 
+ } 
+ 
+ .title-cn { 
+   font-size: 28px; font-weight: bold; letter-spacing: 4px; color: #FFD700; 
+   text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+ } 
+ 
+ .title-en { 
+   font-size: 14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; 
+ } 
+ 
+ .step-desc { 
+   font-size: 16px; line-height: 1.6; color: rgba(255,255,255,0.9); 
+   text-align: justify; letter-spacing: 1px; 
+ } 
+ 
+ /* Navigation */ 
+ .nav-back { 
+   position: fixed; left: 20px; z-index: 100; 
+   width: 40px; height: 40px; border-radius: 50%; 
+   background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); 
+   display: flex; justify-content: center; align-items: center; 
+ } 
+ .back-icon { 
+   color: #fff; font-size: 20px; font-weight: bold; 
+ } 
+ 
+ /* Swipe Hint */ 
+ .swipe-hint { 
+   position: fixed; bottom: 20px; left: 0; width: 100%; 
+   display: flex; flex-direction: column; align-items: center; 
+   z-index: 10; opacity: 0.7; 
+   animation: bounce 2s infinite; 
+ } 
+ 
+ .arrow-up { 
+   width: 12px; height: 12px; 
+   border-top: 2px solid #fff; border-left: 2px solid #fff; 
+   transform: rotate(45deg); margin-bottom: 5px; 
+ } 
+ 
+ .hint-text { 
+   font-size: 12px; color: #fff; letter-spacing: 2px; 
+ } 
+ 
+ @keyframes bounce { 
+   0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 
+   40% { transform: translateY(-10px); } 
+   60% { transform: translateY(-5px); } 
+ } 
+ </style>

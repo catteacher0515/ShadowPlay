@@ -47,14 +47,18 @@
  
  const goDetail = (type) => { 
    console.log('Navigate to:', type); 
-   // Map simple keys to actual routes if needed
+   // Map simple keys to actual routes
    const routes = {
      history: '/pages/wiki/history',
      craft: '/pages/wiki/craft',
-     vocal: '/pages/wiki/music'
+     // 🚨 修正点：路径必须指向新的 vocal 页面
+     vocal: '/pages/wiki/vocal'
    };
+   
    if (routes[type]) {
        uni.navigateTo({ url: routes[type] });
+   } else {
+       console.error('Unknown route type:', type);
    }
  }; 
  
