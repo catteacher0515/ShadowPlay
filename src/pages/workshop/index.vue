@@ -2,94 +2,137 @@
   <view class="workshop-container">
     <!-- Top Area: Stage (65%) -->
     <view class="stage-area">
-      <!-- Vignette Overlay -->
+      <!-- Background -->
+      <image 
+        class="stage-bg" 
+        src="/static/images/workshop/bg-lightbox-portrait.jpg.jpg" 
+        mode="aspectFill" 
+      />
+      
       <view class="vignette-overlay"></view>
+
+      <!-- Help Button -->
+      <view class="btn-help" @click="showHelp = true">
+        <text>?</text>
+      </view>
       
-      <!-- Status Sidebar -->
-      <view class="status-sidebar">
-        <view 
-          class="status-item" 
-          :class="{ active: equipped.head }"
-        >
-          <text class="status-icon">头</text>
+      <!-- Stage Content -->
+      <view class="stage-content">
+        <!-- 1. Text Hint / Progress -->
+        <view class="stage-hint" :class="{ 'hint-complete': isFullSet }">
+          <block v-if="!activeRole">
+            <text class="hint-text placeholder">请先在【头茬】中选择角色</text>
+          </block>
+          <block v-else-if="!isFullSet">
+            <text class="hint-title">正在组装：{{ getRoleName(activeRole) }}</text>
+            <text class="hint-sub">进度: {{ equippedCount }}/4 (缺: {{ missingPartsText }})</text>
+          </block>
+          <block v-else>
+            <text class="hint-text active">✨ 恭喜 · {{ getRoleName(activeRole) }} 已唤醒 ✨</text>
+          </block>
         </view>
-        <view 
-          class="status-item" 
-          :class="{ active: equipped.body }"
-        >
-          <text class="status-icon">靠</text>
-        </view>
-        <view 
-          class="status-item" 
-          :class="{ active: equipped.hand }"
-        >
-          <text class="status-icon">把</text>
-        </view>
-        <view 
-          class="status-item" 
-          :class="{ active: equipped.leg }"
-        >
-          <text class="status-icon">腿</text>
+
+        <!-- 2. Character / Ghost Display -->
+        <view class="character-display">
+          <!-- Awakened State: Full Body -->
+          <!-- We use a computed src to dynamically load the full body image for the active role -->
+          <image 
+            v-if="isFullSet" 
+            class="char-full-body animate-fade-in" 
+            :src="getFullBodySrc(activeRole)" 
+            mode="aspectFit" 
+          />
+          
+          <!-- Assembling State: Ghost Guide + Equipped Icons -->
+          <view v-else class="ghost-container">
+            <!-- Ghost Outline (Fallback Icon since file might be missing) -->
+            <view class="ghost-outline">
+               <text class="ghost-icon">🎭</text>
+            </view>
+            
+            <!-- Floating Parts (Visual Feedback of what's equipped) -->
+            <view class="parts-indicators">
+              <view class="indicator" :class="{ active: hasPart('head') }">头</view>
+              <view class="indicator" :class="{ active: hasPart('body') }">靠</view>
+              <view class="indicator" :class="{ active: hasPart('hand') }">把</view>
+              <view class="indicator" :class="{ active: hasPart('leg') }">腿</view>
+            </view>
+          </view>
         </view>
       </view>
 
-      <!-- Ghost / Assembly Area -->
-      <view class="ghost-container" :class="{ complete: isComplete }">
-        <view class="ghost-outline" v-if="!isComplete"></view>
-        
-        <!-- Equipped Parts -->
-        <view class="equipped-layer">
-          <view v-if="equipped.head" class="part head" :style="{ backgroundColor: equipped.head.color }"></view>
-          <view v-if="equipped.body" class="part body" :style="{ backgroundColor: equipped.body.color }"></view>
-          <view v-if="equipped.hand" class="part hand left" :style="{ backgroundColor: equipped.hand.color }"></view>
-          <view v-if="equipped.hand" class="part hand right" :style="{ backgroundColor: equipped.hand.color }"></view>
-          <view v-if="equipped.leg" class="part leg left" :style="{ backgroundColor: equipped.leg.color }"></view>
-          <view v-if="equipped.leg" class="part leg right" :style="{ backgroundColor: equipped.leg.color }"></view>
+      <!-- Help Modal -->
+      <view class="modal-mask" v-if="showHelp" @click="showHelp = false">
+        <view class="modal-content" @click.stop>
+          <view class="modal-header">
+            <text class="modal-title">皮影组装指南</text>
+            <view class="modal-close" @click="showHelp = false">×</view>
+          </view>
+          <view class="modal-body">
+            <view class="step-item">
+              <text class="step-num">1</text>
+              <view class="step-text">
+                <text class="step-title">选定角色</text>
+                <text class="step-desc">点击【头茬】切换要组装的皮影人物。</text>
+              </view>
+            </view>
+            <view class="step-item">
+              <text class="step-num">2</text>
+              <view class="step-text">
+                <text class="step-title">搜集部件</text>
+                <text class="step-desc">寻找匹配的【靠子】【把子】【腿子】。</text>
+              </view>
+            </view>
+            <view class="step-item">
+              <text class="step-num">3</text>
+              <view class="step-text">
+                <text class="step-title">唤醒真身</text>
+                <text class="step-desc">集齐4个部件，唤醒皮影的完整形态！</text>
+              </view>
+            </view>
+          </view>
+          <button class="btn-primary" @click="showHelp = false">我明白了</button>
         </view>
       </view>
 
-      <!-- Controls -->
-      <view class="stage-controls">
-        <view class="btn-light" @click="toggleLight">
-          <text>💡</text>
-        </view>
-      </view>
-      
-      <view class="test-play-container" v-if="isComplete">
-        <button class="btn-test-play" @click="startTestPlay">
-          <text>▶ 试戏</text>
-        </button>
-      </view>
     </view>
 
     <!-- Bottom Area: Inventory (35%) -->
     <view class="inventory-area">
       <!-- Tabs -->
-      <scroll-view scroll-x class="tabs-scroll">
-        <view class="tabs-container">
-          <view 
-            v-for="tab in tabs" 
-            :key="tab.key"
-            class="tab-item"
-            :class="{ active: currentTab === tab.key }"
-            @click="selectTab(tab.key)"
-          >
-            <text>{{ tab.label }}</text>
-          </view>
+      <view class="tabs-header">
+        <view 
+          v-for="(tab, index) in tabs" 
+          :key="tab.key"
+          class="tab-item"
+          :class="{ active: currentTab === index }"
+          @click="currentTab = index"
+        >
+          <text>{{ tab.label }}</text>
         </view>
-      </scroll-view>
+      </view>
 
       <!-- Grid Content -->
       <scroll-view scroll-y class="grid-scroll">
         <view class="parts-grid">
           <view 
-            v-for="part in currentParts" 
-            :key="part.id"
-            class="part-item"
-            @click="equipPart(part)"
+            v-for="item in inventoryList" 
+            :key="item.id"
+            class="item-card"
+            :class="{ 
+              'quality-epic': item.quality === 'epic',
+              'selected-active': isEquipped(item)
+            }"
+            @click="handleItemClick(item)"
           >
-            <view class="part-preview" :style="{ backgroundColor: part.color }"></view>
-            <text class="part-name">{{ part.name }}</text>
+            <view class="card-bg"></view>
+            <image :src="item.src" class="item-icon" mode="aspectFit" />
+            <text class="item-name">{{ item.name }}</text>
+            
+            <!-- Selection Indicator -->
+            <view v-if="isEquipped(item)" class="check-mark">
+              <text>✔</text>
+            </view>
           </view>
         </view>
       </scroll-view>
@@ -100,103 +143,167 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import CustomTabBar from '@/components/CustomTabBar.vue'
 
-// --- State ---
-const currentTab = ref('head') // head, body, hand, leg
-const equipped = reactive({
-  head: null,
-  body: null,
-  hand: null,
-  leg: null
-})
+// --- 1. Asset Database (Expanded for Journey to the West) ---
+const gameDatabase = [
+  // --- 1. Sun Wukong ---
+  { id: 'wk_head', name: '美猴王', category: 'head', role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-head.png.png', quality: 'epic' },
+  { id: 'wk_body', name: '锁子黄金甲', category: 'body', role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-body.png', quality: 'epic' },
+  { id: 'wk_hand', name: '如意金箍棒', category: 'hand', role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-hand.png.png', quality: 'epic' },
+  { id: 'wk_leg',  name: '藕丝步云履', category: 'leg',  role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-leg.png.png', quality: 'epic' },
+  
+  // --- 2. Tang Seng ---
+  { id: 'ts_head', name: '唐三藏', category: 'head', role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-head.png.png', quality: 'epic' },
+  { id: 'ts_body', name: '锦斓袈裟', category: 'body', role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-body.png.png', quality: 'epic' },
+  { id: 'ts_hand', name: '九环锡杖', category: 'hand', role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-hand.png.png', quality: 'epic' },
+  { id: 'ts_leg',  name: '僧鞋',   category: 'leg',  role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-leg.png.png', quality: 'epic' },
 
-// --- Data ---
+  // --- 3. Zhu Bajie ---
+  { id: 'bj_head', name: '天蓬元帅', category: 'head', role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-head.png.png', quality: 'epic' },
+  { id: 'bj_body', name: '皂直裰',   category: 'body', role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-body.png.png', quality: 'epic' },
+  { id: 'bj_hand', name: '九齿钉耙', category: 'hand', role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-hand.png.png', quality: 'epic' },
+  { id: 'bj_leg',  name: '行脚鞋',   category: 'leg',  role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-leg.png.png', quality: 'epic' },
+
+  // --- 4. Sha Seng ---
+  { id: 'ss_head', name: '卷帘大将', category: 'head', role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-head.png.png', quality: 'epic' },
+  { id: 'ss_body', name: '黄锦直裰', category: 'body', role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-body.png.png', quality: 'epic' },
+  { id: 'ss_hand', name: '降妖宝杖', category: 'hand', role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-hand.png.png', quality: 'epic' },
+  { id: 'ss_leg',  name: '麻鞋',     category: 'leg',  role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-leg.png.png', quality: 'epic' },
+];
+
+// --- 2. State & Logic ---
+const showHelp = ref(false);
 const tabs = [
   { key: 'head', label: '头茬' },
   { key: 'body', label: '靠子' },
   { key: 'hand', label: '把子' },
   { key: 'leg', label: '腿子' }
-]
+];
 
-const mockParts = {
-  head: [
-    { id: 'h1', name: '美猴王', color: '#FFD700' },
-    { id: 'h2', name: '白骨精', color: '#C0C0C0' },
-    { id: 'h3', name: '唐僧', color: '#FFC0CB' },
-    { id: 'h4', name: '猪八戒', color: '#FFB6C1' },
-  ],
-  body: [
-    { id: 'b1', name: '锁子甲', color: '#DAA520' },
-    { id: 'b2', name: '素白袍', color: '#F0F8FF' },
-    { id: 'b3', name: '锦斓袈裟', color: '#FF4500' },
-    { id: 'b4', name: '黑风甲', color: '#2F4F4F' },
-  ],
-  hand: [
-    { id: 'ha1', name: '金箍棒', color: '#FFD700' },
-    { id: 'ha2', name: '双剑', color: '#C0C0C0' },
-    { id: 'ha3', name: '九齿钉耙', color: '#A9A9A9' },
-    { id: 'ha4', name: '降妖杖', color: '#8B4513' },
-  ],
-  leg: [
-    { id: 'l1', name: '登云靴', color: '#000000' },
-    { id: 'l2', name: '绣花鞋', color: '#DC143C' },
-    { id: 'l3', name: '僧鞋', color: '#8B4513' },
-    { id: 'l4', name: '战靴', color: '#556B2F' },
-  ]
-}
+const currentTab = ref(0); // 0=Head, 1=Body, 2=Hand, 3=Leg
+const activeRole = ref(null); // 'wukong', 'tangseng', 'bajie', 'shaseng'
+const equippedIds = ref(new Set());
+const equippedCategories = ref(new Set()); // Tracks which slots are filled
+
+// Show help on first mount
+onMounted(() => {
+  // showHelp.value = true;
+});
 
 // --- Computed ---
-const currentParts = computed(() => {
-  return mockParts[currentTab.value] || []
-})
+const inventoryList = computed(() => {
+  const currentKey = tabs[currentTab.value].key;
+  // Show ALL items for the selected category (Head/Body/etc)
+  // This allows users to see all options and try to match them
+  return gameDatabase.filter(item => item.category === currentKey);
+});
 
-const isComplete = computed(() => {
-  return equipped.head && equipped.body && equipped.hand && equipped.leg
-})
+const isFullSet = computed(() => {
+  return equippedCategories.value.size === 4;
+});
+
+const equippedCount = computed(() => equippedCategories.value.size);
+
+const missingPartsText = computed(() => {
+  const allCats = ['head', 'body', 'hand', 'leg'];
+  const missing = allCats.filter(c => !equippedCategories.value.has(c));
+  const map = { head: '头茬', body: '靠子', hand: '把子', leg: '腿子' };
+  return missing.map(c => map[c]).join('、');
+});
 
 // --- Actions ---
-const selectTab = (key) => {
-  currentTab.value = key
-}
+const getRoleName = (roleKey) => {
+  const map = { 
+    'wukong': '孙悟空',
+    'tangseng': '唐僧',
+    'bajie': '猪八戒',
+    'shaseng': '沙僧'
+  };
+  return map[roleKey] || roleKey;
+};
 
-const equipPart = (part) => {
-  // 1. Equip the part
-  equipped[currentTab.value] = part
-  
-  // 2. Auto-advance logic
-  const order = ['head', 'body', 'hand', 'leg']
-  const currentIndex = order.indexOf(currentTab.value)
-  
-  if (currentIndex < order.length - 1) {
-    // Move to next tab if not last
-    const nextTab = order[currentIndex + 1]
-    // Optional: only auto-advance if next slot is empty? 
-    // User requested: "Auto switch to next tab"
-    setTimeout(() => {
-      currentTab.value = nextTab
-    }, 300)
+const getFullBodySrc = (roleKey) => {
+  // Using the parent folder icons for full body as per request
+  const map = {
+    'wukong': '/static/images/workshop/icons/sunwukong.png.png',
+    'tangseng': '/static/images/workshop/icons/tangseng.png.png',
+    'bajie': '/static/images/workshop/icons/bajie.png.png',
+    'shaseng': '/static/images/workshop/icons/shaseng.png.png'
+  };
+  return map[roleKey] || '';
+};
+
+const isEquipped = (item) => {
+  return equippedIds.value.has(item.id);
+};
+
+const hasPart = (category) => {
+  return equippedCategories.value.has(category);
+};
+
+const handleItemClick = (item) => {
+  // Logic 1: Head Selection (Sets or Switches Role)
+  if (item.category === 'head') {
+    // If switching role, reset everything
+    if (activeRole.value !== item.role) {
+      activeRole.value = item.role;
+      equippedIds.value.clear();
+      equippedCategories.value.clear();
+      
+      // Equip the head
+      equippedIds.value.add(item.id);
+      equippedCategories.value.add('head');
+      
+      uni.showToast({ title: `已切换角色: ${getRoleName(item.role)}，请重新组装！`, icon: 'none' });
+      
+      // Auto-switch to next tab
+      setTimeout(() => { currentTab.value = 1; }, 500);
+    } else {
+      // If same head, maybe just ensure it's equipped?
+      if (!equippedIds.value.has(item.id)) {
+        equippedIds.value.add(item.id);
+        equippedCategories.value.add('head');
+      }
+    }
+  } 
+  // Logic 2: Body/Hand/Leg Selection (Must match active role)
+  else {
+    if (!activeRole.value) {
+      uni.showToast({ title: '请先在"头茬"中选择角色', icon: 'none' });
+      return;
+    }
+    
+    if (item.role !== activeRole.value) {
+      const itemRoleName = getRoleName(item.role);
+      const currentRoleName = getRoleName(activeRole.value);
+      uni.showToast({ title: `这是${itemRoleName}的部件，不是${currentRoleName}的！`, icon: 'error' });
+      return;
+    }
+
+    // Add item
+    equippedIds.value.add(item.id);
+    equippedCategories.value.add(item.category);
+    
+    uni.showToast({ title: '装备成功', icon: 'success' });
+    
+    // Auto-switch logic (Guide user to next empty slot)
+    const nextIndex = currentTab.value + 1;
+    if (nextIndex < tabs.length && !isFullSet.value) {
+       setTimeout(() => { currentTab.value = nextIndex; }, 400);
+    }
   }
-}
-
-const toggleLight = () => {
-  console.log('Toggle Light Check')
-  uni.showToast({ title: '透光检查开启', icon: 'none' })
-}
-
-const startTestPlay = () => {
-  console.log('Start Test Play')
-  uni.showToast({ title: '开始试戏', icon: 'success' })
-}
+};
 </script>
 
 <style lang="scss" scoped>
 /* Variables */
-$stage-bg: #F7F5F0;
-$inventory-bg: #3E2723;
+$stage-bg: #1a1a1a;
+$inventory-bg: #2C1608;
 $gold: #FFD700;
-$active-border: #FFD700;
+$card-bg: #3E2723;
+$epic-border: #FFD700;
 
 .workshop-container {
   display: flex;
@@ -204,284 +311,253 @@ $active-border: #FFD700;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  background-color: $stage-bg;
 }
 
-/* --- Top Stage Area (65%) --- */
+/* --- Stage Area --- */
 .stage-area {
   height: 65%;
-  background-color: $stage-bg;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.stage-bg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0.6;
 }
 
 .vignette-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.3) 100%);
-  pointer-events: none;
-  z-index: 1;
+  position: absolute; inset: 0;
+  background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
+  pointer-events: none; z-index: 1;
 }
 
-/* Status Sidebar */
-.status-sidebar {
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  z-index: 2;
-}
-
-.status-item {
-  width: 40px;
-  height: 40px;
+.btn-help {
+  position: absolute; top: 40px; right: 20px;
+  width: 30px; height: 30px;
+  border: 1px solid rgba(255,255,255,0.5);
   border-radius: 50%;
-  border: 2px dashed #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255,255,255,0.5);
-  transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: bold; z-index: 20;
+  background: rgba(0,0,0,0.3);
+}
+
+.stage-content {
+  position: relative; z-index: 5;
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+
+.stage-hint {
+  position: absolute; top: 40px;
+  z-index: 10;
+  background: rgba(0,0,0,0.6);
+  padding: 10px 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; flex-direction: column; align-items: center;
   
-  &.active {
-    border: 2px solid $gold;
-    background-color: $gold;
-    color: #3E2723;
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba($gold, 0.5);
+  &.hint-complete {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: $gold;
   }
 }
 
-.status-icon {
-  font-size: 14px;
+.hint-text {
+  font-size: 16px; font-weight: bold; letter-spacing: 1px;
+  &.active { color: $gold; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+  &.placeholder { color: rgba(255,255,255,0.6); }
 }
 
-/* Ghost / Assembly Area */
+.hint-title { color: #fff; font-size: 14px; margin-bottom: 4px; }
+.hint-sub { color: #aaa; font-size: 12px; }
+
+.character-display {
+  width: 100%; height: 80%;
+  display: flex; justify-content: center; align-items: center;
+}
+
+.char-full-body {
+  height: 90%; width: 90%;
+}
+
 .ghost-container {
-  position: relative;
-  width: 200px;
-  height: 300px;
-  z-index: 2;
-  transition: all 0.5s;
-  
-  &.complete {
-    transform: scale(1.05);
-  }
+  display: flex; flex-direction: column; align-items: center;
 }
 
 .ghost-outline {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: 3px dashed $gold;
-  border-radius: 10px;
-  animation: breathing-glow 2s infinite alternate;
-  background-color: rgba($gold, 0.05);
+  width: 200px; height: 300px;
+  border: 2px dashed rgba(255,255,255,0.15);
+  border-radius: 12px;
+  display: flex; justify-content: center; align-items: center;
+  margin-bottom: 20px;
 }
 
-.equipped-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
+.ghost-icon { font-size: 48px; opacity: 0.3; }
 
-.part {
-  position: absolute;
-  transition: all 0.3s;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+.parts-indicators {
+  display: flex; gap: 10px;
+}
+.indicator {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: #666;
   
-  &.head {
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    z-index: 10;
-  }
-  
-  &.body {
-    top: 75px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 100px;
-    border-radius: 10px;
-    z-index: 5;
-  }
-  
-  &.hand {
-    top: 80px;
-    width: 30px;
-    height: 80px;
-    border-radius: 5px;
-    z-index: 4;
-    
-    &.left { left: 30px; transform: rotate(15deg); }
-    &.right { right: 30px; transform: rotate(-15deg); }
-  }
-  
-  &.leg {
-    bottom: 20px;
-    width: 35px;
-    height: 90px;
-    border-radius: 5px;
-    z-index: 3;
-    
-    &.left { left: 50px; }
-    &.right { right: 50px; }
+  &.active {
+    background: $gold; color: #000; font-weight: bold;
+    box-shadow: 0 0 8px rgba(255,215,0,0.5);
   }
 }
 
-/* Controls */
-.stage-controls {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 10;
+.animate-fade-in {
+  animation: fadeIn 1s ease-out;
 }
 
-.btn-light {
-  width: 44px;
-  height: 44px;
-  background-color: rgba(0,0,0,0.6);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #fff;
-  font-size: 20px;
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); filter: blur(10px); }
+  to { opacity: 1; transform: scale(1); filter: blur(0); }
 }
 
-.test-play-container {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
+/* --- Modal --- */
+.modal-mask {
+  position: absolute; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.8);
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-content {
+  width: 80%; background: #2C1608;
+  border: 1px solid #5D4037;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;
+}
+.modal-title { color: $gold; font-size: 18px; font-weight: bold; }
+.modal-close { color: #aaa; font-size: 24px; padding: 0 10px; }
+
+.step-item { display: flex; margin-bottom: 15px; }
+.step-num { 
+  width: 24px; height: 24px; background: $gold; color: #000; 
+  border-radius: 50%; text-align: center; line-height: 24px; font-size: 14px; font-weight: bold;
+  margin-right: 12px; flex-shrink: 0;
+}
+.step-text { display: flex; flex-direction: column; }
+.step-title { color: #E0E0E0; font-size: 15px; font-weight: bold; margin-bottom: 2px; }
+.step-desc { color: #9E9E9E; font-size: 13px; line-height: 1.4; }
+
+.btn-primary {
+  background: $gold; color: #000; border: none; font-size: 14px; font-weight: bold;
+  margin-top: 10px; width: 100%; border-radius: 20px;
 }
 
-.btn-test-play {
-  background-color: $gold;
-  color: #3E2723;
-  font-weight: bold;
-  border-radius: 50px;
-  padding: 0 30px;
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
-  border: none;
-  animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* --- Bottom Inventory Area (35%) --- */
+/* --- Inventory Area --- */
 .inventory-area {
   height: 35%;
   background-color: $inventory-bg;
-  border-top: 4px solid #5D4037;
-  display: flex;
-  flex-direction: column;
-  z-index: 10;
+  border-top: 2px solid #5D4037;
+  display: flex; flex-direction: column;
+  z-index: 20;
   box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
 }
 
-.tabs-scroll {
-  height: 50px;
-  background-color: rgba(0,0,0,0.2);
-}
-
-.tabs-container {
+/* Tabs */
+.tabs-header {
+  height: 44px;
   display: flex;
-  height: 100%;
-  padding: 0 10px;
+  background-color: rgba(0,0,0,0.3);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .tab-item {
-  flex: 0 0 auto;
-  padding: 0 20px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #aaa;
-  font-size: 14px;
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  color: #8D6E63; font-size: 14px;
   position: relative;
-  
+  transition: all 0.3s;
+
   &.active {
-    color: $gold;
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.05);
-    
+    color: $gold; font-weight: bold; background-color: rgba(255,215,0,0.05);
     &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background-color: $gold;
+      content: ''; position: absolute; bottom: 0; left: 25%; width: 50%; height: 2px; background-color: $gold;
     }
   }
 }
 
+/* Grid */
 .grid-scroll {
   flex: 1;
-  padding: 15px;
+  padding: 10px;
   box-sizing: border-box;
 }
 
 .parts-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
+  gap: 10px;
   padding-bottom: 20px;
 }
 
-.part-item {
+/* Item Card */
+.item-card {
+  position: relative;
   aspect-ratio: 1;
-  background-color: rgba(255,255,255,0.1);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  border: 1px solid transparent;
-  
-  &:active {
-    background-color: rgba(255,255,255,0.2);
+  background-color: $card-bg;
+  border-radius: 6px;
+  border: 1px solid #4E342E;
+  overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  &:active { transform: scale(0.95); }
+
+  /* Default Epic Style */
+  &.quality-epic {
+    border-color: rgba($epic-border, 0.3);
+  }
+
+  /* SELECTED STATE (Gold Border + Scale) */
+  &.selected-active {
+    border: 2px solid $gold !important;
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+    z-index: 2; /* Pop above others */
   }
 }
 
-.part-preview {
-  width: 30px;
-  height: 30px;
-  border-radius: 4px;
+.card-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+  z-index: 0;
 }
 
-.part-name {
+.item-icon {
+  width: 70%; height: 70%; z-index: 1;
+}
+
+.item-name {
+  position: absolute; bottom: 0; width: 100%;
+  text-align: center; font-size: 9px; color: #D7CCC8;
+  background-color: rgba(0,0,0,0.6);
+  padding: 2px 0;
+  z-index: 2;
+}
+
+.check-mark {
+  position: absolute; top: 2px; right: 2px;
+  background: $gold; color: #000;
+  width: 14px; height: 14px;
+  border-radius: 50%;
   font-size: 10px;
-  color: #ccc;
-  text-align: center;
-}
-
-/* Animations */
-@keyframes breathing-glow {
-  0% { box-shadow: 0 0 10px rgba($gold, 0.2); border-color: rgba($gold, 0.6); }
-  100% { box-shadow: 0 0 25px rgba($gold, 0.6); border-color: $gold; }
-}
-
-@keyframes pop-in {
-  0% { transform: scale(0); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  display: flex; align-items: center; justify-content: center;
+  z-index: 3;
 }
 </style>
