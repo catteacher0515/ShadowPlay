@@ -28,29 +28,53 @@
             <text class="hint-sub">进度: {{ equippedCount }}/4 (缺: {{ missingPartsText }})</text>
           </block>
           <block v-else>
-            <text class="hint-text active">✨ 恭喜 · {{ getRoleName(activeRole) }} 已唤醒 ✨</text>
+            <text class="hint-text active" v-if="!isExploded">✨ 恭喜 · {{ getRoleName(activeRole) }} 已唤醒 ✨</text>
+            <text class="hint-text active" v-else>🛠️ 结构拆解 · {{ getRoleName(activeRole) }} 🛠️</text>
+            <text class="hint-sub" v-if="!isExploded">(点击皮影查看部件详情)</text>
           </block>
         </view>
 
         <!-- 2. Character / Ghost Display -->
         <view class="character-display">
-          <!-- Awakened State: Full Body -->
-          <!-- We use a computed src to dynamically load the full body image for the active role -->
-          <image 
-            v-if="isFullSet" 
-            class="char-full-body animate-fade-in" 
-            :src="getFullBodySrc(activeRole)" 
-            mode="aspectFit" 
-          />
           
-          <!-- Assembling State: Ghost Guide + Equipped Icons -->
+          <!-- State A: Awakened (Interactive) -->
+          <view 
+            v-if="isFullSet" 
+            class="puppet-display" 
+            @click="toggleExplode"
+          >
+            <!-- Layer A: Full Body Image (Normal) -->
+            <image 
+              class="char-full-body animate-fade-in" 
+              :class="{ 'hidden': isExploded }"
+              :src="getFullBodySrc(activeRole)" 
+              mode="aspectFit" 
+            />
+
+            <!-- Layer B: Exploded Parts (Blueprint) -->
+            <!-- Only shown when exploded (or transitioning) -->
+            <view class="exploded-container" :class="{ 'active': isExploded }">
+               <!-- Connector Lines -->
+               <view class="connector-line line-head"></view>
+               <view class="connector-line line-hand"></view>
+               <view class="connector-line line-leg"></view>
+
+               <!-- The 4 Parts -->
+               <image class="exp-part exp-head" :src="getPartSrc('head')" mode="aspectFit" />
+               <image class="exp-part exp-body" :src="getPartSrc('body')" mode="aspectFit" />
+               <image class="exp-part exp-hand" :src="getPartSrc('hand')" mode="aspectFit" />
+               <image class="exp-part exp-leg"  :src="getPartSrc('leg')"  mode="aspectFit" />
+            </view>
+          </view>
+          
+          <!-- State B: Assembling (Ghost) -->
           <view v-else class="ghost-container">
-            <!-- Ghost Outline (Fallback Icon since file might be missing) -->
+            <!-- Ghost Outline -->
             <view class="ghost-outline">
                <text class="ghost-icon">🎭</text>
             </view>
             
-            <!-- Floating Parts (Visual Feedback of what's equipped) -->
+            <!-- Floating Parts Indicators -->
             <view class="parts-indicators">
               <view class="indicator" :class="{ active: hasPart('head') }">头</view>
               <view class="indicator" :class="{ active: hasPart('body') }">靠</view>
@@ -58,6 +82,7 @@
               <view class="indicator" :class="{ active: hasPart('leg') }">腿</view>
             </view>
           </view>
+
         </view>
       </view>
 
@@ -87,7 +112,7 @@
               <text class="step-num">3</text>
               <view class="step-text">
                 <text class="step-title">唤醒真身</text>
-                <text class="step-desc">集齐4个部件，唤醒皮影的完整形态！</text>
+                <text class="step-desc">集齐4个部件，唤醒皮影的完整形态！点击唤醒后的皮影可查看结构。</text>
               </view>
             </view>
           </view>
@@ -186,6 +211,7 @@ const currentTab = ref(0); // 0=Head, 1=Body, 2=Hand, 3=Leg
 const activeRole = ref(null); // 'wukong', 'tangseng', 'bajie', 'shaseng'
 const equippedIds = ref(new Set());
 const equippedCategories = ref(new Set()); // Tracks which slots are filled
+const isExploded = ref(false);
 
 // Show help on first mount
 onMounted(() => {
@@ -195,8 +221,7 @@ onMounted(() => {
 // --- Computed ---
 const inventoryList = computed(() => {
   const currentKey = tabs[currentTab.value].key;
-  // Show ALL items for the selected category (Head/Body/etc)
-  // This allows users to see all options and try to match them
+  // Show ALL items for the selected category
   return gameDatabase.filter(item => item.category === currentKey);
 });
 
@@ -225,7 +250,6 @@ const getRoleName = (roleKey) => {
 };
 
 const getFullBodySrc = (roleKey) => {
-  // Using the parent folder icons for full body as per request
   const map = {
     'wukong': '/static/images/workshop/icons/sunwukong.png.png',
     'tangseng': '/static/images/workshop/icons/tangseng.png.png',
@@ -233,6 +257,17 @@ const getFullBodySrc = (roleKey) => {
     'shaseng': '/static/images/workshop/icons/shaseng.png.png'
   };
   return map[roleKey] || '';
+};
+
+// Helper to get the src of a specific part for the active role
+const getPartSrc = (category) => {
+  if (!activeRole.value) return '';
+  const item = gameDatabase.find(i => i.role === activeRole.value && i.category === category);
+  return item ? item.src : '';
+};
+
+const toggleExplode = () => {
+  isExploded.value = !isExploded.value;
 };
 
 const isEquipped = (item) => {
@@ -251,6 +286,7 @@ const handleItemClick = (item) => {
       activeRole.value = item.role;
       equippedIds.value.clear();
       equippedCategories.value.clear();
+      isExploded.value = false; // Reset exploded state
       
       // Equip the head
       equippedIds.value.add(item.id);
@@ -380,12 +416,96 @@ $epic-border: #FFD700;
 .character-display {
   width: 100%; height: 80%;
   display: flex; justify-content: center; align-items: center;
+  perspective: 1000px; /* For potential 3D effects */
 }
 
+/* === PUPPET DISPLAY (AWAKENED) === */
+.puppet-display {
+  width: 100%; height: 100%;
+  display: flex; justify-content: center; align-items: center;
+  position: relative;
+}
+
+/* Layer A: Full Body */
 .char-full-body {
   height: 90%; width: 90%;
+  transition: all 0.3s ease-out;
+  
+  &.hidden {
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+  }
 }
 
+/* Layer B: Exploded View */
+.exploded-container {
+  position: absolute;
+  width: 300rpx; height: 400rpx; /* Base size for layout */
+  display: flex; justify-content: center; align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+
+  &.active {
+    opacity: 1;
+    pointer-events: auto;
+    
+    /* Trigger Part Movements */
+    .exp-head { transform: translateY(-240rpx) scale(1.1); }
+    .exp-hand { transform: translateX(200rpx) rotate(15deg) scale(1.1); }
+    .exp-leg  { transform: translateY(240rpx) scale(1.1); }
+    .exp-body { transform: scale(1.2); }
+    
+    /* Show Connectors */
+    .connector-line { opacity: 0.6; }
+  }
+}
+
+.exp-part {
+  position: absolute;
+  width: 220rpx; height: 220rpx;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 10;
+  
+  /* Initial Center Position */
+  top: 50%; left: 50%;
+  margin-top: -110rpx; margin-left: -110rpx;
+  
+  &.exp-head { z-index: 11; }
+  &.exp-body { width: 260rpx; height: 320rpx; margin-top: -160rpx; margin-left: -130rpx; z-index: 10; }
+  &.exp-hand { z-index: 12; }
+  &.exp-leg  { z-index: 9; }
+}
+
+/* Connector Lines */
+.connector-line {
+  position: absolute;
+  background-color: transparent;
+  border: 1px dashed $gold;
+  opacity: 0;
+  transition: opacity 0.5s 0.2s; /* Delay fade in */
+  z-index: 5;
+  transform-origin: center;
+}
+
+.line-head {
+  height: 80rpx; width: 0;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -120rpx);
+}
+.line-hand {
+  width: 80rpx; height: 0;
+  top: 50%; left: 50%;
+  transform: translate(30rpx, 0);
+}
+.line-leg {
+  height: 80rpx; width: 0;
+  top: 50%; left: 50%;
+  transform: translate(-50%, 40rpx);
+}
+
+/* === GHOST STATE === */
 .ghost-container {
   display: flex; flex-direction: column; align-items: center;
 }
