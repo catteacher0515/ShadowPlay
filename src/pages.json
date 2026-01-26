@@ -36,7 +36,7 @@
       }
     },
     {
-      "path": "pages/wiki/daily",
+      "path": "pages/daily/index",
       "style": {
         "navigationBarTitleText": "拾影·日签",
         "navigationStyle": "custom"
