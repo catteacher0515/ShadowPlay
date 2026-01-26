@@ -13,7 +13,7 @@
        <view class="paper-card"> 
          
          <view class="visual-box"> 
-           <image class="main-art" src="/static/images/daily/sample-shadow-hunting.jpg.jpg" mode="aspectFit" /> 
+           <image class="main-art" src="/static/images/daily/sample-shadow-hunting.jpg.jpg" mode="aspectFill" /> 
            
            <view class="date-overlay"> 
              <text class="lunar-text">乙巳年 正月廿三</text> 
@@ -28,7 +28,7 @@
              <view class="daily-advice"> 
                <text class="label">今日，</text> 
                <text class="value">宜一团和气。</text> 
-             </view> 
+             </view>
              <image class="brand-stamp" src="/static/images/daily/stamp-watermark-brand.png.png" mode="heightFix" /> 
            </view> 
          </view> 
@@ -74,7 +74,7 @@
  } 
  .bg-layer { 
    position: absolute; inset: 0; width: 100%; height: 100%; 
-   z-index: 0; opacity: 0.6; /* Dim the background texture slightly */ 
+   z-index: 0; opacity: 0.6; 
  } 
  
  /* Navbar */ 
@@ -98,70 +98,70 @@
    position: relative; z-index: 10; 
    width: 100%; height: 100%; 
    display: flex; justify-content: center; align-items: center; 
-   padding-bottom: 60px; /* Space for footer button */ 
+   padding-bottom: 60px; 
  } 
  
  /* THE UNIFIED PAPER CARD */ 
  .paper-card { 
    width: 650rpx; 
-   /* Fixed Aspect Ratio for a long card */ 
    height: 1000rpx; 
-   background-color: #F5EAD4; /* VINTAGE PAPER COLOR */ 
-   background-image: linear-gradient(to bottom, #F5EAD4, #EBE0C5); /* Subtle gradient */ 
+   /* 米黄色宣纸底色 */
+   background-color: #F5EAD4; 
+   background-image: linear-gradient(to bottom, #F5EAD4, #EBE0C5); 
    border-radius: 12rpx; 
-   box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Deep shadow for 3D effect */ 
+   box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
    overflow: hidden; 
    display: flex; flex-direction: column; 
    position: relative; 
-   
-   /* Add a subtle noise texture using a pseudo-element if possible, 
-      or just stick to the color for now to fix the "Black Void" issue. */ 
  } 
  
- /* Top Visual Area */ 
+ /* Top Visual Area (60% Height) */ 
  .visual-box { 
-   flex: 5; /* Takes up 50-60% of the card */ 
+   flex: 6; /* 占比调大一点，让图大一点 */
    position: relative; 
    width: 100%; 
    overflow: hidden; 
-   /* Make sure the image blends nicely */ 
  } 
  .main-art { 
    width: 100%; height: 100%; 
-   /* Assuming the image might have a white/black bg, multiply helps blend it into the paper */ 
+   /* ⚠️ 关键修正：用 aspectFill 撑满，不留黑边 */
+   /* 混合模式保留，如果是白底图会变透明 */
    mix-blend-mode: multiply; 
-   opacity: 0.9; 
+   opacity: 0.95; 
  } 
  
  /* Date Overlay */ 
  .date-overlay { 
-   position: absolute; top: 40rpx; left: 0; width: 100%; 
+   position: absolute; top: 60rpx; left: 0; width: 100%; 
    display: flex; flex-direction: column; align-items: center; 
    z-index: 20; 
+   /* 给文字加个阴影，防止背景太花看不清 */
+   text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
  } 
  .lunar-text { 
-   writing-mode: vertical-rl; /* Vertical Text */ 
+   writing-mode: vertical-rl; 
    font-family: 'Songti SC', serif; 
-   font-size: 32rpx; color: #333; /* Dark text on paper */ 
-   margin-bottom: 10rpx; letter-spacing: 4rpx; 
+   font-size: 34rpx; color: #2C1608; 
+   margin-bottom: 12rpx; letter-spacing: 6rpx; 
    font-weight: bold; 
  } 
  .solar-text { 
    font-family: 'Courier New', serif; 
-   font-size: 20rpx; color: #666; 
-   margin-top: 10rpx; 
+   font-size: 22rpx; color: #555; 
+   margin-top: 12rpx; 
+   font-weight: 600;
  } 
  .divider-line { 
-   height: 40rpx; opacity: 0.6; 
+   height: 40rpx; opacity: 0.8; 
  } 
  
- /* Bottom Text Area */ 
+ /* Bottom Text Area (40% Height) */ 
  .text-box { 
-   flex: 3; /* Takes up the rest */ 
+   flex: 4; 
    position: relative; 
    width: 100%; 
    display: flex; align-items: center; justify-content: center; 
-   /* No separate background image needed, it inherits the card's paper color */ 
+   background: transparent; /* 透出底下的纸纹 */
  } 
  .content-layer { 
    width: 100%; padding: 0 40rpx; 
@@ -169,17 +169,26 @@
  } 
  .poem { 
    font-family: 'Songti SC', serif; 
-   font-size: 36rpx; color: #2C1608; 
+   font-size: 38rpx; color: #2C1608; 
    margin-bottom: 40rpx; letter-spacing: 2rpx; 
    text-align: center; 
+   font-weight: bold;
  } 
  .daily-advice { 
    display: flex; align-items: center; 
-   font-size: 24rpx; color: #8A6D3B; 
-   margin-bottom: 40rpx; 
+   font-size: 26rpx; color: #8A6D3B; 
+   margin-bottom: 50rpx; 
+   border-top: 1px solid rgba(138, 109, 59, 0.3);
+   border-bottom: 1px solid rgba(138, 109, 59, 0.3);
+   padding: 10rpx 20rpx;
  } 
- .stamp { 
-   height: 60rpx; opacity: 0.8; mix-blend-mode: multiply; 
+ 
+ /* ⚠️ 关键修正：这里原来的类名是 .stamp，必须改成 .brand-stamp */
+ .brand-stamp { 
+   height: 80rpx; /* 锁死高度 */
+   width: 200rpx; /* 锁死宽度，防止被原图撑爆 */
+   opacity: 0.7; 
+   mix-blend-mode: multiply; 
  } 
  
  /* Footer Action */ 

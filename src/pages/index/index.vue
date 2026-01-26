@@ -97,10 +97,10 @@ const goToDaily = () => {
 /* Daily Entry Button - 修正后的位置 */
 .btn-daily-entry {
   position: absolute;
-  top: 280rpx;  /* 之前商定的位置 */
-  left: 30rpx;  /* 放在左侧挂件区 */
-  width: 130rpx; 
-  height: 130rpx;
+  top: 65%;  /* 之前商定的位置 */
+  left: 24%;  /* 放在左侧挂件区 */
+  width: 400rpx; 
+  height: 200rpx;
   z-index: 50;
   animation: float-btn 3s ease-in-out infinite;
 }
