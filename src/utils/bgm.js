@@ -1,70 +1,61 @@
-import { reactive } from 'vue';
+// src/utils/bgm.js
 
-// Use a singleton InnerAudioContext
-const bgm = uni.createInnerAudioContext();
-bgm.src = '/static/audio/bgm-hall-intro.mp3';
-bgm.loop = true;
-bgm.autoplay = false; // Control manually via manager
+class BGMManager {
+  constructor() {
+    this.innerAudioContext = null;
+    this.isMusicOn = true; // 默认开启
+  }
 
-export const bgmState = reactive({
-  playing: false
-});
-
-// Event Listeners to sync state
-bgm.onPlay(() => {
-  console.log('Global BGM Started');
-  bgmState.playing = true;
-});
-
-bgm.onPause(() => {
-  console.log('Global BGM Paused');
-  bgmState.playing = false;
-});
-
-bgm.onStop(() => {
-  bgmState.playing = false;
-});
-
-bgm.onError((e) => {
-  console.error('Global BGM Error', e);
-  bgmState.playing = false;
-});
-
-// Helper to ensure context exists (sometimes context can be destroyed by system)
-// For simple usage, we assume the singleton persists.
-
-export const bgmManager = {
-  /**
-   * Start playing the BGM
-   */
-  play: () => {
-    if (!bgmState.playing) {
-      bgm.play();
+  // 初始化或获取实例
+  getInstance() {
+    if (!this.innerAudioContext) {
+      this.innerAudioContext = uni.createInnerAudioContext();
+      this.innerAudioContext.loop = true; // 默认循环
+      this.innerAudioContext.volume = 0.5; // 默认音量
     }
-  },
+    return this.innerAudioContext;
+  }
 
-  /**
-   * Pause the BGM
-   */
-  pause: () => {
-    if (bgmState.playing) {
-      bgm.pause();
+  // 播放音乐
+  play(src) {
+    const ctx = this.getInstance();
+    if (src && ctx.src !== src) {
+      ctx.src = src; // 只有路径变了才重新加载
     }
-  },
+    // 只有在开关开启时才播放
+    if (this.isMusicOn) {
+      ctx.play();
+    }
+  }
 
-  /**
-   * Toggle play/pause state
-   */
-  toggle: () => {
-    if (bgmState.playing) {
-      bgm.pause();
+  // 暂停
+  pause() {
+    if (this.innerAudioContext) {
+      this.innerAudioContext.pause();
+    }
+  }
+
+  // 停止
+  stop() {
+    if (this.innerAudioContext) {
+      this.innerAudioContext.stop();
+    }
+  }
+
+  // 切换静音状态
+  toggleMute() {
+    this.isMusicOn = !this.isMusicOn;
+    if (this.isMusicOn) {
+      // 如果恢复开启，且有源文件，则尝试播放
+      if (this.innerAudioContext && this.innerAudioContext.src) {
+        this.innerAudioContext.play();
+      }
     } else {
-      bgm.play();
+      this.pause();
     }
-  },
-  
-  /**
-   * Check current status
-   */
-  isPlaying: () => bgmState.playing
-};
+    return this.isMusicOn;
+  }
+}
+
+// ✨ 核心修复点：使用 const 定义并导出，匹配 import { bgmManager } 的写法
+export const bgmManager = new BGMManager();
