@@ -1,8 +1,6 @@
 <template>
   <view class="workshop-container">
-    <!-- Top Area: Stage (65%) -->
     <view class="stage-area">
-      <!-- Background -->
       <image 
         class="stage-bg" 
         src="/static/images/workshop/bg-lightbox-portrait.jpg.jpg" 
@@ -11,14 +9,11 @@
       
       <view class="vignette-overlay"></view>
 
-      <!-- Help Button -->
       <view class="btn-help" @click="showHelp = true">
         <text>?</text>
       </view>
       
-      <!-- Stage Content -->
       <view class="stage-content">
-        <!-- 1. Text Hint / Progress -->
         <view class="stage-hint" :class="{ 'hint-complete': isFullSet }">
           <block v-if="!activeRole">
             <text class="hint-text placeholder">请先在【头茬】中选择角色</text>
@@ -34,16 +29,13 @@
           </block>
         </view>
 
-        <!-- 2. Character / Ghost Display -->
         <view class="character-display">
           
-          <!-- State A: Awakened (Interactive) -->
           <view 
             v-if="isFullSet" 
             class="puppet-display" 
             @click="toggleExplode"
           >
-            <!-- Layer A: Full Body Image (Normal) -->
             <image 
               class="char-full-body animate-fade-in" 
               :class="{ 'hidden': isExploded }"
@@ -51,15 +43,11 @@
               mode="aspectFit" 
             />
 
-            <!-- Layer B: Exploded Parts (Blueprint) -->
-            <!-- Only shown when exploded (or transitioning) -->
             <view class="exploded-container" :class="{ 'active': isExploded }">
-               <!-- Connector Lines -->
                <view class="connector-line line-head"></view>
                <view class="connector-line line-hand"></view>
                <view class="connector-line line-leg"></view>
 
-               <!-- The 4 Parts -->
                <image class="exp-part exp-head" :src="getPartSrc('head')" mode="aspectFit" />
                <image class="exp-part exp-body" :src="getPartSrc('body')" mode="aspectFit" />
                <image class="exp-part exp-hand" :src="getPartSrc('hand')" mode="aspectFit" />
@@ -67,14 +55,11 @@
             </view>
           </view>
           
-          <!-- State B: Assembling (Ghost) -->
           <view v-else class="ghost-container">
-            <!-- Ghost Outline -->
             <view class="ghost-outline">
                <text class="ghost-icon">🎭</text>
             </view>
             
-            <!-- Floating Parts Indicators -->
             <view class="parts-indicators">
               <view class="indicator" :class="{ active: hasPart('head') }">头</view>
               <view class="indicator" :class="{ active: hasPart('body') }">靠</view>
@@ -86,7 +71,6 @@
         </view>
       </view>
 
-      <!-- Help Modal -->
       <view class="modal-mask" v-if="showHelp" @click="showHelp = false">
         <view class="modal-content" @click.stop>
           <view class="modal-header">
@@ -122,9 +106,7 @@
 
     </view>
 
-    <!-- Bottom Area: Inventory (35%) -->
     <view class="inventory-area">
-      <!-- Tabs -->
       <view class="tabs-header">
         <view 
           v-for="(tab, index) in tabs" 
@@ -137,7 +119,6 @@
         </view>
       </view>
 
-      <!-- Grid Content -->
       <scroll-view scroll-y class="grid-scroll">
         <view class="parts-grid">
           <view 
@@ -154,7 +135,6 @@
             <image :src="item.src" class="item-icon" mode="aspectFit" />
             <text class="item-name">{{ item.name }}</text>
             
-            <!-- Selection Indicator -->
             <view v-if="isEquipped(item)" class="check-mark">
               <text>✔</text>
             </view>
@@ -171,7 +151,7 @@
 import { ref, computed, reactive, onMounted } from 'vue'
 import CustomTabBar from '@/components/CustomTabBar.vue'
 
-// --- 1. Asset Database (Expanded for Journey to the West) ---
+// --- 1. Asset Database ---
 const gameDatabase = [
   // --- 1. Sun Wukong ---
   { id: 'wk_head', name: '美猴王', category: 'head', role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-head.png.png', quality: 'epic' },
@@ -196,6 +176,18 @@ const gameDatabase = [
   { id: 'ss_body', name: '黄锦直裰', category: 'body', role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-body.png.png', quality: 'epic' },
   { id: 'ss_hand', name: '降妖宝杖', category: 'hand', role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-hand.png.png', quality: 'epic' },
   { id: 'ss_leg',  name: '麻鞋',     category: 'leg',  role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-leg.png.png', quality: 'epic' },
+
+  // --- 5. White Snake (白素贞) ---
+  { id: 'ws_head', name: '珠翠白凤冠', category: 'head', role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-head.png.png', quality: 'epic' },
+  { id: 'ws_body', name: '白绫云纹蟒', category: 'body', role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-body.png.png', quality: 'epic' },
+  { id: 'ws_hand', name: '雄黄宝剑',   category: 'hand', role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-hand.png.png', quality: 'epic' },
+  { id: 'ws_leg',  name: '步步生莲履', category: 'leg',  role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-leg.png.png', quality: 'epic' },
+
+  // --- 6. Xu Xian (许仙) ---
+  { id: 'xx_head', name: '许仙文生巾', category: 'head', role: 'xuxian', src: '/static/images/workshop/icons/icon-xu-head.png.png', quality: 'epic' },
+  { id: 'xx_body', name: '蓝绸书生褶', category: 'body', role: 'xuxian', src: '/static/images/workshop/icons/icon-xu-body.png.png', quality: 'epic' },
+  { id: 'xx_hand', name: '西湖借伞',   category: 'hand', role: 'xuxian', src: '/static/images/workshop/icons/icon-xu-hand.png.png', quality: 'epic' },
+  { id: 'xx_leg',  name: '登云薄底靴', category: 'leg',  role: 'xuxian', src: '/static/images/workshop/icons/icon-xu-leg.png.png', quality: 'epic' },
 ];
 
 // --- 2. State & Logic ---
@@ -207,13 +199,12 @@ const tabs = [
   { key: 'leg', label: '腿子' }
 ];
 
-const currentTab = ref(0); // 0=Head, 1=Body, 2=Hand, 3=Leg
-const activeRole = ref(null); // 'wukong', 'tangseng', 'bajie', 'shaseng'
+const currentTab = ref(0);
+const activeRole = ref(null);
 const equippedIds = ref(new Set());
-const equippedCategories = ref(new Set()); // Tracks which slots are filled
+const equippedCategories = ref(new Set()); 
 const isExploded = ref(false);
 
-// Show help on first mount
 onMounted(() => {
   // showHelp.value = true;
 });
@@ -221,7 +212,6 @@ onMounted(() => {
 // --- Computed ---
 const inventoryList = computed(() => {
   const currentKey = tabs[currentTab.value].key;
-  // Show ALL items for the selected category
   return gameDatabase.filter(item => item.category === currentKey);
 });
 
@@ -241,10 +231,8 @@ const missingPartsText = computed(() => {
 // --- Actions ---
 const getRoleName = (roleKey) => {
   const map = { 
-    'wukong': '孙悟空',
-    'tangseng': '唐僧',
-    'bajie': '猪八戒',
-    'shaseng': '沙僧'
+    'wukong': '孙悟空', 'tangseng': '唐僧', 'bajie': '猪八戒', 'shaseng': '沙僧',
+    'whitesnake': '白素贞', 'xuxian': '许仙'
   };
   return map[roleKey] || roleKey;
 };
@@ -254,12 +242,13 @@ const getFullBodySrc = (roleKey) => {
     'wukong': '/static/images/workshop/icons/sunwukong.png.png',
     'tangseng': '/static/images/workshop/icons/tangseng.png.png',
     'bajie': '/static/images/workshop/icons/bajie.png.png',
-    'shaseng': '/static/images/workshop/icons/shaseng.png.png'
+    'shaseng': '/static/images/workshop/icons/shaseng.png.png',
+    'whitesnake': '/static/images/workshop/icons/white.png.png',
+    'xuxian': '/static/images/workshop/icons/xu.png.png'
   };
   return map[roleKey] || '';
 };
 
-// Helper to get the src of a specific part for the active role
 const getPartSrc = (category) => {
   if (!activeRole.value) return '';
   const item = gameDatabase.find(i => i.role === activeRole.value && i.category === category);
@@ -279,32 +268,27 @@ const hasPart = (category) => {
 };
 
 const handleItemClick = (item) => {
-  // Logic 1: Head Selection (Sets or Switches Role)
+  // Head Selection
   if (item.category === 'head') {
-    // If switching role, reset everything
     if (activeRole.value !== item.role) {
       activeRole.value = item.role;
       equippedIds.value.clear();
       equippedCategories.value.clear();
-      isExploded.value = false; // Reset exploded state
+      isExploded.value = false; 
       
-      // Equip the head
       equippedIds.value.add(item.id);
       equippedCategories.value.add('head');
       
-      uni.showToast({ title: `已切换角色: ${getRoleName(item.role)}，请重新组装！`, icon: 'none' });
-      
-      // Auto-switch to next tab
+      uni.showToast({ title: `已切换角色: ${getRoleName(item.role)}`, icon: 'none' });
       setTimeout(() => { currentTab.value = 1; }, 500);
     } else {
-      // If same head, maybe just ensure it's equipped?
       if (!equippedIds.value.has(item.id)) {
         equippedIds.value.add(item.id);
         equippedCategories.value.add('head');
       }
     }
   } 
-  // Logic 2: Body/Hand/Leg Selection (Must match active role)
+  // Body/Hand/Leg Selection
   else {
     if (!activeRole.value) {
       uni.showToast({ title: '请先在"头茬"中选择角色', icon: 'none' });
@@ -314,17 +298,15 @@ const handleItemClick = (item) => {
     if (item.role !== activeRole.value) {
       const itemRoleName = getRoleName(item.role);
       const currentRoleName = getRoleName(activeRole.value);
-      uni.showToast({ title: `这是${itemRoleName}的部件，不是${currentRoleName}的！`, icon: 'error' });
+      uni.showToast({ title: `这是${itemRoleName}的部件!`, icon: 'error' });
       return;
     }
 
-    // Add item
     equippedIds.value.add(item.id);
     equippedCategories.value.add(item.category);
     
     uni.showToast({ title: '装备成功', icon: 'success' });
     
-    // Auto-switch logic (Guide user to next empty slot)
     const nextIndex = currentTab.value + 1;
     if (nextIndex < tabs.length && !isFullSet.value) {
        setTimeout(() => { currentTab.value = nextIndex; }, 400);
@@ -350,9 +332,9 @@ $epic-border: #FFD700;
   background-color: $stage-bg;
 }
 
-/* --- Stage Area --- */
+/* --- Stage Area (55% Height) --- */
 .stage-area {
-  height: 65%;
+  height: 55%; 
   position: relative;
   display: flex;
   justify-content: center;
@@ -416,7 +398,9 @@ $epic-border: #FFD700;
 .character-display {
   width: 100%; height: 80%;
   display: flex; justify-content: center; align-items: center;
-  perspective: 1000px; /* For potential 3D effects */
+  perspective: 1000px;
+  /* CRITICAL FIX: Push display DOWN to avoid top banner overlap */
+  transform: translateY(60rpx);
 }
 
 /* === PUPPET DISPLAY (AWAKENED) === */
@@ -426,9 +410,9 @@ $epic-border: #FFD700;
   position: relative;
 }
 
-/* Layer A: Full Body */
 .char-full-body {
-  height: 90%; width: 90%;
+  height: 85%; /* Slightly reduced height to fit better */
+  width: 85%;
   transition: all 0.3s ease-out;
   
   &.hidden {
@@ -438,10 +422,10 @@ $epic-border: #FFD700;
   }
 }
 
-/* Layer B: Exploded View */
+/* Exploded View */
 .exploded-container {
   position: absolute;
-  width: 300rpx; height: 400rpx; /* Base size for layout */
+  width: 300rpx; height: 400rpx;
   display: flex; justify-content: center; align-items: center;
   opacity: 0;
   pointer-events: none;
@@ -451,59 +435,46 @@ $epic-border: #FFD700;
     opacity: 1;
     pointer-events: auto;
     
-    /* Trigger Part Movements */
+    /* Animation Values (Big Parts, Far Travel) */
     .exp-head { transform: translateY(-240rpx) scale(1.1); }
     .exp-hand { transform: translateX(200rpx) rotate(15deg) scale(1.1); }
     .exp-leg  { transform: translateY(240rpx) scale(1.1); }
     .exp-body { transform: scale(1.2); }
     
-    /* Show Connectors */
     .connector-line { opacity: 0.6; }
   }
 }
 
 .exp-part {
   position: absolute;
-  width: 220rpx; height: 220rpx;
+  width: 220rpx; height: 220rpx; /* Increased Size */
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 10;
-  
-  /* Initial Center Position */
   top: 50%; left: 50%;
   margin-top: -110rpx; margin-left: -110rpx;
   
   &.exp-head { z-index: 11; }
-  &.exp-body { width: 260rpx; height: 320rpx; margin-top: -160rpx; margin-left: -130rpx; z-index: 10; }
+  &.exp-body { 
+    width: 260rpx; height: 320rpx; 
+    margin-top: -160rpx; margin-left: -130rpx; 
+    z-index: 10; 
+  }
   &.exp-hand { z-index: 12; }
   &.exp-leg  { z-index: 9; }
 }
 
-/* Connector Lines */
 .connector-line {
   position: absolute;
   background-color: transparent;
   border: 1px dashed $gold;
   opacity: 0;
-  transition: opacity 0.5s 0.2s; /* Delay fade in */
+  transition: opacity 0.5s 0.2s;
   z-index: 5;
   transform-origin: center;
 }
-
-.line-head {
-  height: 80rpx; width: 0;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -120rpx);
-}
-.line-hand {
-  width: 80rpx; height: 0;
-  top: 50%; left: 50%;
-  transform: translate(30rpx, 0);
-}
-.line-leg {
-  height: 80rpx; width: 0;
-  top: 50%; left: 50%;
-  transform: translate(-50%, 40rpx);
-}
+.line-head { height: 80rpx; width: 0; top: 50%; left: 50%; transform: translate(-50%, -120rpx); }
+.line-hand { width: 80rpx; height: 0; top: 50%; left: 50%; transform: translate(30rpx, 0); }
+.line-leg { height: 80rpx; width: 0; top: 50%; left: 50%; transform: translate(-50%, 40rpx); }
 
 /* === GHOST STATE === */
 .ghost-container {
@@ -535,10 +506,7 @@ $epic-border: #FFD700;
   }
 }
 
-.animate-fade-in {
-  animation: fadeIn 1s ease-out;
-}
-
+.animate-fade-in { animation: fadeIn 1s ease-out; }
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); filter: blur(10px); }
   to { opacity: 1; transform: scale(1); filter: blur(0); }
@@ -579,9 +547,9 @@ $epic-border: #FFD700;
   margin-top: 10px; width: 100%; border-radius: 20px;
 }
 
-/* --- Inventory Area --- */
+/* --- Inventory Area (45% Height) --- */
 .inventory-area {
-  height: 35%;
+  height: 45%; 
   background-color: $inventory-bg;
   border-top: 2px solid #5D4037;
   display: flex; flex-direction: column;
@@ -617,13 +585,15 @@ $epic-border: #FFD700;
   flex: 1;
   padding: 10px;
   box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
 .parts-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  padding-bottom: 20px;
+  /* CRITICAL: Safe Area + Extra Padding to avoid TabBar overlap */
+  padding-bottom: calc(env(safe-area-inset-bottom) + 180rpx);
 }
 
 /* Item Card */
@@ -639,17 +609,13 @@ $epic-border: #FFD700;
 
   &:active { transform: scale(0.95); }
 
-  /* Default Epic Style */
-  &.quality-epic {
-    border-color: rgba($epic-border, 0.3);
-  }
+  &.quality-epic { border-color: rgba($epic-border, 0.3); }
 
-  /* SELECTED STATE (Gold Border + Scale) */
   &.selected-active {
     border: 2px solid $gold !important;
     transform: scale(1.05);
     box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
-    z-index: 2; /* Pop above others */
+    z-index: 2; 
   }
 }
 

@@ -54,8 +54,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import CustomTabBar from '@/components/CustomTabBar.vue';
+import { bgmManager } from '@/utils/bgm.js';
 
 const safeAreaTop = uni.getSystemInfoSync().statusBarHeight || 20;
 
@@ -80,6 +81,26 @@ const enterScript = (script) => {
   // Future: Navigate to Level Map
   uni.showToast({ title: `进入《${script.title}》世界`, icon: 'success' });
 };
+
+// --- BGM Logic: Pause on Entry, Resume on Exit ---
+let wasPlayingBefore = false;
+
+onMounted(() => {
+  // Check if BGM is playing
+  if (bgmManager.isPlaying()) {
+    wasPlayingBefore = true;
+    bgmManager.pause(); // Pause global BGM when entering theater
+    console.log('Theater: Pausing Global BGM');
+  }
+});
+
+onUnmounted(() => {
+  // Resume if it was playing before
+  if (wasPlayingBefore) {
+    bgmManager.play();
+    console.log('Theater: Resuming Global BGM');
+  }
+});
 </script>
 
 <style lang="scss" scoped>

@@ -26,15 +26,12 @@
        </view>
     </view>
 
-    <view class="floating-controls" :style="{ top: (navTop + navHeight + 30) + 'px' }">
-       <view class="bgm-control" @click="toggleBGM">
-          <image 
-             class="bgm-icon" 
-             src="/static/images/index/icon-btn-bgm-gong.png.png" 
-             :class="{ 'animate-spin': isBgmOn }" 
-          />
-       </view>
-    </view>
+    <!-- Insert New Music Control -->
+    <MusicControl 
+      src="/static/audio/bgm-hall-intro.mp3" 
+      :top="navTop + navHeight + 20" 
+      :left="20"
+    />
 
     <CustomTabBar current-path="/pages/index/index" />
 
@@ -44,6 +41,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import CustomTabBar from '@/components/CustomTabBar.vue';
+import MusicControl from '@/components/MusicControl.vue';
 
 // --- Layout Calculation ---
 const navTop = ref(0);
@@ -61,12 +59,7 @@ onMounted(() => {
 });
 
 // --- Logic ---
-const isBgmOn = ref(true);
 const userInfo = ref({ avatarUrl: '' });
-
-const toggleBGM = () => {
-  isBgmOn.value = !isBgmOn.value;
-};
 
 const goToProfile = () => {
   uni.navigateTo({ url: '/pages/profile/index' });
@@ -133,12 +126,4 @@ const goToDaily = () => {
 /* Title */
 .nav-center { height: 100%; display: flex; align-items: center; }
 .app-name { font-size: 17px; font-weight: 600; color: #FFFFFF; letter-spacing: 1px; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
-
-/* Floating Controls */
-.floating-controls {
-  position: absolute; left: 15px; z-index: 10; pointer-events: auto;
-}
-.bgm-icon { width: 40px; height: 40px; opacity: 0.9; }
-
-@keyframes spin { 100% { transform: rotate(360deg); } }
 </style>
