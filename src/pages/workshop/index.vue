@@ -89,14 +89,14 @@
               <text class="step-num">2</text>
               <view class="step-text">
                 <text class="step-title">搜集部件</text>
-                <text class="step-desc">寻找匹配的【靠子】【把子】【腿子】。</text>
+                <text class="step-desc">前往【指尖剧场】演出，赢取更多部件解锁权限。</text>
               </view>
             </view>
             <view class="step-item">
               <text class="step-num">3</text>
               <view class="step-text">
                 <text class="step-title">唤醒真身</text>
-                <text class="step-desc">集齐4个部件，唤醒皮影的完整形态！点击唤醒后的皮影可查看结构。</text>
+                <text class="step-desc">集齐4个部件，唤醒皮影的完整形态！</text>
               </view>
             </view>
           </view>
@@ -127,7 +127,8 @@
             class="item-card"
             :class="{ 
               'quality-epic': item.quality === 'epic',
-              'selected-active': isEquipped(item)
+              'selected-active': isEquipped(item),
+              'is-locked': checkLocked(item) /* ✨ 锁定状态样式 */
             }"
             @click="handleItemClick(item)"
           >
@@ -138,6 +139,11 @@
             <view v-if="isEquipped(item)" class="check-mark">
               <text>✔</text>
             </view>
+
+            <view v-if="checkLocked(item)" class="lock-overlay">
+               <text class="lock-emoji">🔒</text>
+            </view>
+
           </view>
         </view>
       </scroll-view>
@@ -148,10 +154,12 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+// ✨ 引入 onShow 生命周期，确保每次切回来都能刷新库存
+import { onShow } from '@dcloudio/uni-app'
 import CustomTabBar from '@/components/CustomTabBar.vue'
 
-// --- 1. Asset Database ---
+// --- 1. Asset Database (不变) ---
 const gameDatabase = [
   // --- 1. Sun Wukong ---
   { id: 'wk_head', name: '美猴王', category: 'head', role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-head.png.png', quality: 'epic' },
@@ -205,9 +213,36 @@ const equippedIds = ref(new Set());
 const equippedCategories = ref(new Set()); 
 const isExploded = ref(false);
 
-onMounted(() => {
-  // showHelp.value = true;
+// ✨ 新增：已解锁的物品 ID 集合
+const unlockedItems = ref(new Set());
+
+// ✨ 核心改造：onShow 读取影箱数据
+onShow(() => {
+  loadInventory();
 });
+
+// ✨ 读取“随身影箱”逻辑
+const loadInventory = () => {
+  try {
+    let inventory = uni.getStorageSync('USER_INVENTORY');
+    
+    // 如果是新用户（没有库存），发放“孙悟空”迎新礼包
+    if (!inventory || inventory.length === 0) {
+      // 孙悟空全套 ID
+      inventory = ['wk_head', 'wk_body', 'wk_hand', 'wk_leg'];
+      uni.setStorageSync('USER_INVENTORY', inventory);
+      
+      // 可以在这里加一个弹窗提示用户获得礼包，暂时省略
+      console.log('New User: Granted Wukong Set');
+    }
+    
+    // 更新内存中的解锁列表
+    unlockedItems.value = new Set(inventory);
+    
+  } catch (e) {
+    console.error('Failed to load inventory', e);
+  }
+};
 
 // --- Computed ---
 const inventoryList = computed(() => {
@@ -267,7 +302,22 @@ const hasPart = (category) => {
   return equippedCategories.value.has(category);
 };
 
+// ✨ 判断是否锁定
+const checkLocked = (item) => {
+  return !unlockedItems.value.has(item.id);
+};
+
 const handleItemClick = (item) => {
+  // ✨ 拦截逻辑：如果是锁定的，禁止操作
+  if (checkLocked(item)) {
+    uni.showToast({
+      title: '请前往【指尖剧场】解锁该部件',
+      icon: 'none',
+      duration: 2000
+    });
+    return;
+  }
+
   // Head Selection
   if (item.category === 'head') {
     if (activeRole.value !== item.role) {
@@ -297,7 +347,6 @@ const handleItemClick = (item) => {
     
     if (item.role !== activeRole.value) {
       const itemRoleName = getRoleName(item.role);
-      const currentRoleName = getRoleName(activeRole.value);
       uni.showToast({ title: `这是${itemRoleName}的部件!`, icon: 'error' });
       return;
     }
@@ -355,7 +404,7 @@ $epic-border: #FFD700;
 }
 
 .btn-help {
-  position: absolute; top: 40px; right: 20px;
+  position: absolute; top: 110px; right: 20px;
   width: 30px; height: 30px;
   border: 1px solid rgba(255,255,255,0.5);
   border-radius: 50%;
@@ -399,7 +448,6 @@ $epic-border: #FFD700;
   width: 100%; height: 80%;
   display: flex; justify-content: center; align-items: center;
   perspective: 1000px;
-  /* CRITICAL FIX: Push display DOWN to avoid top banner overlap */
   transform: translateY(60rpx);
 }
 
@@ -411,7 +459,7 @@ $epic-border: #FFD700;
 }
 
 .char-full-body {
-  height: 85%; /* Slightly reduced height to fit better */
+  height: 85%;
   width: 85%;
   transition: all 0.3s ease-out;
   
@@ -435,7 +483,7 @@ $epic-border: #FFD700;
     opacity: 1;
     pointer-events: auto;
     
-    /* Animation Values (Big Parts, Far Travel) */
+    /* Animation Values */
     .exp-head { transform: translateY(-240rpx) scale(1.1); }
     .exp-hand { transform: translateX(200rpx) rotate(15deg) scale(1.1); }
     .exp-leg  { transform: translateY(240rpx) scale(1.1); }
@@ -447,18 +495,14 @@ $epic-border: #FFD700;
 
 .exp-part {
   position: absolute;
-  width: 220rpx; height: 220rpx; /* Increased Size */
+  width: 220rpx; height: 220rpx; 
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 10;
   top: 50%; left: 50%;
   margin-top: -110rpx; margin-left: -110rpx;
   
   &.exp-head { z-index: 11; }
-  &.exp-body { 
-    width: 260rpx; height: 320rpx; 
-    margin-top: -160rpx; margin-left: -130rpx; 
-    z-index: 10; 
-  }
+  &.exp-body { width: 260rpx; height: 320rpx; margin-top: -160rpx; margin-left: -130rpx; z-index: 10; }
   &.exp-hand { z-index: 12; }
   &.exp-leg  { z-index: 9; }
 }
@@ -491,19 +535,14 @@ $epic-border: #FFD700;
 
 .ghost-icon { font-size: 48px; opacity: 0.3; }
 
-.parts-indicators {
-  display: flex; gap: 10px;
-}
+.parts-indicators { display: flex; gap: 10px; }
 .indicator {
   width: 30px; height: 30px; border-radius: 50%;
   background: rgba(255,255,255,0.1);
   display: flex; align-items: center; justify-content: center;
   font-size: 12px; color: #666;
   
-  &.active {
-    background: $gold; color: #000; font-weight: bold;
-    box-shadow: 0 0 8px rgba(255,215,0,0.5);
-  }
+  &.active { background: $gold; color: #000; font-weight: bold; box-shadow: 0 0 8px rgba(255,215,0,0.5); }
 }
 
 .animate-fade-in { animation: fadeIn 1s ease-out; }
@@ -521,8 +560,7 @@ $epic-border: #FFD700;
 .modal-content {
   width: 80%; background: #2C1608;
   border: 1px solid #5D4037;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 12px; padding: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.8);
 }
 .modal-header {
@@ -557,34 +595,25 @@ $epic-border: #FFD700;
   box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
 }
 
-/* Tabs */
 .tabs-header {
-  height: 44px;
-  display: flex;
+  height: 44px; display: flex;
   background-color: rgba(0,0,0,0.3);
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .tab-item {
-  flex: 1;
-  display: flex; align-items: center; justify-content: center;
+  flex: 1; display: flex; align-items: center; justify-content: center;
   color: #8D6E63; font-size: 14px;
-  position: relative;
-  transition: all 0.3s;
+  position: relative; transition: all 0.3s;
 
   &.active {
     color: $gold; font-weight: bold; background-color: rgba(255,215,0,0.05);
-    &::after {
-      content: ''; position: absolute; bottom: 0; left: 25%; width: 50%; height: 2px; background-color: $gold;
-    }
+    &::after { content: ''; position: absolute; bottom: 0; left: 25%; width: 50%; height: 2px; background-color: $gold; }
   }
 }
 
-/* Grid */
 .grid-scroll {
-  flex: 1;
-  padding: 10px;
-  box-sizing: border-box;
+  flex: 1; padding: 10px; box-sizing: border-box;
   margin-bottom: 20px;
 }
 
@@ -592,14 +621,11 @@ $epic-border: #FFD700;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  /* CRITICAL: Safe Area + Extra Padding to avoid TabBar overlap */
   padding-bottom: calc(env(safe-area-inset-bottom) + 180rpx);
 }
 
-/* Item Card */
 .item-card {
-  position: relative;
-  aspect-ratio: 1;
+  position: relative; aspect-ratio: 1;
   background-color: $card-bg;
   border-radius: 6px;
   border: 1px solid #4E342E;
@@ -608,7 +634,6 @@ $epic-border: #FFD700;
   transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
 
   &:active { transform: scale(0.95); }
-
   &.quality-epic { border-color: rgba($epic-border, 0.3); }
 
   &.selected-active {
@@ -616,6 +641,19 @@ $epic-border: #FFD700;
     transform: scale(1.05);
     box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
     z-index: 2; 
+  }
+
+  /* ✨ 核心锁定样式 ✨ */
+  &.is-locked {
+    pointer-events: auto; /* 允许点击以触发提示 */
+    
+    .item-icon {
+      filter: grayscale(100%); /* 变灰 */
+      opacity: 0.4; /* 变暗 */
+    }
+    .item-name {
+      color: #777;
+    }
   }
 }
 
@@ -625,25 +663,32 @@ $epic-border: #FFD700;
   z-index: 0;
 }
 
-.item-icon {
-  width: 70%; height: 70%; z-index: 1;
-}
+.item-icon { width: 70%; height: 70%; z-index: 1; }
 
 .item-name {
   position: absolute; bottom: 0; width: 100%;
   text-align: center; font-size: 9px; color: #D7CCC8;
   background-color: rgba(0,0,0,0.6);
-  padding: 2px 0;
-  z-index: 2;
+  padding: 2px 0; z-index: 2;
 }
 
 .check-mark {
   position: absolute; top: 2px; right: 2px;
   background: $gold; color: #000;
   width: 14px; height: 14px;
-  border-radius: 50%;
-  font-size: 10px;
+  border-radius: 50%; font-size: 10px;
   display: flex; align-items: center; justify-content: center;
   z-index: 3;
+}
+
+/* ✨ 锁头图标样式 ✨ */
+.lock-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 5;
+}
+.lock-emoji {
+  font-size: 24px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 </style>
