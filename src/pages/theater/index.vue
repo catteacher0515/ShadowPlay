@@ -92,19 +92,32 @@ const onSwiperChange = (e) => {
 };
 
 const enterScript = (script) => {
+  // 1. 如果是锁定的，弹窗提示
   if (script.locked) {
-    uni.showToast({ title: '剧本尚未解锁', icon: 'none' });
+    uni.showToast({ title: '该剧本尚未解锁', icon: 'none' });
     return;
   }
-  console.log('Entering script:', script.title);
-  uni.showToast({ title: `进入《${script.title}》世界`, icon: 'success' });
+
+  // 2. 如果是《西游记》(ID=1)，跳转到西游专属关卡页
+  if (script.id === 1) {
+    uni.navigateTo({
+      url: '/pages/theater/journey/index',
+      animationType: 'pop-in',
+      animationDuration: 300
+    });
+    return;
+  }
+
+  // 3. 其他未开发的剧本 (如白蛇传)
+  uni.showToast({ title: `《${script.title}》正在筹备中...`, icon: 'none' });
 };
 
 // --- BGM Logic ---
 let wasPlayingBefore = false;
 
 onMounted(() => {
-  if (bgmManager.isPlaying()) {
+  // ✅ 正确写法：直接读取属性 (注意去掉括号)
+  if (bgmManager.isMusicOn) { 
     wasPlayingBefore = true;
     bgmManager.pause(); 
     console.log('Theater: Pausing Global BGM');

@@ -15,6 +15,13 @@
       }
     },
     {
+      "path": "pages/theater/journey/index",
+      "style": {
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
       "path": "pages/workshop/index",
       "style": {
         "navigationBarTitleText": "皮影工坊",
