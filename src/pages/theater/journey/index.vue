@@ -49,7 +49,9 @@
         <view class="node-label">高老庄</view>
         <view v-if="levels[0].isLocked" class="lock-overlay">🔒</view>
         
-        <view v-if="!levels[0].isCleared" class="player-marker">🐵</view>
+        <view v-if="!levels[0].isCleared" class="player-marker">
+          <view class="arrow-down-gold"></view>
+        </view>
       </view>
       
     </view>
@@ -90,15 +92,14 @@ const enterLevel = (index) => {
     return;
   }
   // 这里可以根据 index 跳转到不同的游戏页面
-  // uni.navigateTo(...)
-  uni.showToast({ title: `前往：${level.name}`, icon: 'none' });
+  uni.showToast({ title: `前往：${level.name}`, icon: 'loading' });
 };
 </script>
 
 <style lang="scss" scoped>
 .journey-map-container {
   width: 100vw; height: 100vh;
-  position: relative; background-color: #000; /* 纯黑底色 */
+  position: relative; background-color: #000;
   overflow: hidden;
 }
 
@@ -106,10 +107,10 @@ const enterLevel = (index) => {
 .bg-fullscreen {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   z-index: 0;
-  opacity: 0.4; /* ✨ 降低透明度，解决看不清图标的问题 */
+  opacity: 0.4;
 }
 
-/* 额外的暗色遮罩，增加层次感 */
+/* 遮罩 */
 .bg-mask {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   z-index: 1;
@@ -134,44 +135,33 @@ const enterLevel = (index) => {
   box-sizing: border-box;
 }
 
-/* --- 路径连线 (CSS 模拟) --- */
-/* 调整说明：
-   为了适配你新的节点位置，我重新计算了线条的旋转和位置。
-   使用了 dotted 虚线作为默认状态（未通关），solid 实线作为通关状态。
-*/
+/* --- 路径连线 (保持你的数值) --- */
 .path-line {
   position: absolute; z-index: 5;
-  border-top: 3px dotted rgba(255, 255, 255, 0.2); /* 默认：暗淡的白虚线 */
+  border-top: 3px dotted rgba(255, 255, 255, 0.2);
   transform-origin: left center;
   transition: all 0.5s;
-  width: 0; /* 默认隐藏，下面单独设置宽度 */
+  width: 0;
   
   &.active {
     border-top-style: solid;
-    border-color: #FFD700; /* 激活：亮金色实线 */
+    border-color: #FFD700;
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
   }
 }
 
-/* 连接 1 -> 2 (从左下 到 右中) */
-/* 你的坐标：1(Bottom 15%, Left 10%) -> 2(Top 65%, Right 10%) */
-/* Top 65% 大约是 Bottom 35%。垂直差距 20%，水平跨度很大。 */
 .path-1-2 {
-  bottom: 18%; left: 20%; /* 起点 */
-  width: 75%; /* 长度 */
-  transform: rotate(-39deg); /* 角度微微向上 */
-  /* 如果没连上，这里的 rotate 和 width 需要微调，因为 CSS 画斜线很难精准 */
+  bottom: 18%; left: 20%;
+  width: 75%;
+  transform: rotate(-39deg);
 }
 
-/* 连接 2 -> 3 (从右中 到 左上) */
-/* 你的坐标：2(Top 65%, Right 10%) -> 3(Top 25%, Left 15%) */
 .path-2-3 {
-  top: 60%; right: 20%; /* 起点设在右边 */
+  top: 60%; right: 20%;
   width: 70%;
-  transform-origin: right center; /* 以右侧为旋转轴 */
-  transform: rotate(48deg); /* 向上翘起指向左上 */
+  transform-origin: right center;
+  transform: rotate(48deg);
 }
-
 
 /* --- 关卡节点 --- */
 .stage-node {
@@ -181,17 +171,15 @@ const enterLevel = (index) => {
   
   &:active { transform: scale(0.95); }
   
-  /* 锁定状态：变灰、半透明 */
   &.locked { 
     filter: grayscale(100%); 
     opacity: 0.6;
     .node-label { background: rgba(0,0,0,0.8); color: #999; border-color: #555; }
   }
   
-  /* 通关状态：高亮 */
   &.cleared {
     .node-icon { 
-      filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); /* 强烈发光 */
+      filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
     }
     .node-label {
       background: rgba(255, 215, 0, 0.2); 
@@ -201,16 +189,14 @@ const enterLevel = (index) => {
   }
 }
 
-/* 节点图标 */
 .node-icon {
-  width: 120px; height: 120px; /* 稍微调大一点，更好看 */
-  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8)); /* 基础阴影 */
+  width: 120px; height: 120px;
+  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8));
   transition: all 0.3s;
 }
 
-/* 节点文字标签 */
 .node-label {
-  margin-top: -10px; /* 稍微往上提一点，紧凑些 */
+  margin-top: -10px;
   padding: 4px 16px; border-radius: 20px;
   background: rgba(0,0,0,0.6); 
   border: 1px solid rgba(255,255,255,0.3);
@@ -219,7 +205,6 @@ const enterLevel = (index) => {
   z-index: 2;
 }
 
-/* 锁图标 */
 .lock-overlay {
   position: absolute; top: 0; right: 0;
   font-size: 28px; text-shadow: 0 2px 4px #000;
@@ -227,20 +212,35 @@ const enterLevel = (index) => {
   width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
 }
 
-/* 玩家位置标记 */
+/* ✨✨✨ 新版：金色下箭头 (Pure CSS) ✨✨✨ */
 .player-marker {
-  position: absolute; top: -40px;
-  font-size: 40px; z-index: 30;
-  animation: bounce 1s infinite alternate;
-  filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
+  position: absolute; 
+  top: -60px; /* 悬浮在图标上方，留出距离 */
+  left: 50%; /* 水平居中 */
+  transform: translateX(-50%);
+  z-index: 30;
+  animation: bounce 1.2s infinite ease-in-out alternate;
 }
-@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
-/* ✨✨✨ 你的自定义坐标 (保留不动) ✨✨✨ */
-/* 1. 高老庄：左下 */
+.arrow-down-gold {
+  width: 0; 
+  height: 0; 
+  /* 使用 Border 绘制倒三角形 */
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 25px solid #FFD700; /* 亮金色 */
+  
+  /* 添加发光滤镜 */
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+}
+
+@keyframes bounce { 
+  from { transform: translate(-50%, 0); } 
+  to { transform: translate(-50%, -15px); } 
+}
+
+/* --- 你的自定义坐标 (保留不动) --- */
 .stage-1 { bottom: 15%; left: 10%; }
-/* 2. 流沙河：中间偏右 */
 .stage-2 { top: 60%; right: 10%; transform: translateY(-50%); }
-/* 3. 女儿国：中上偏左 */
 .stage-3 { top: 25%; left: 15%; }
 </style>
