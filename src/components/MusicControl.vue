@@ -24,9 +24,9 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+// ✨ 核心修改：引入全局管理器
+import { bgmManager } from '@/utils/bgm.js';
 
-// 如果你还没有创建 bgm.js，这里先用简易版逻辑，保证不报错
-// 如果你已经有了 bgm.js，请替换为 import { bgmManager, bgmState } from '@/utils/bgm';
 const props = defineProps({
   src: { type: String, default: '/static/audio/bgm-hall-intro.mp3' },
   top: { type: [Number, String], default: 100 },
@@ -35,29 +35,23 @@ const props = defineProps({
 });
 
 const isPlaying = ref(false);
-let innerAudioContext = null;
 
 onMounted(() => {
-  innerAudioContext = uni.createInnerAudioContext();
-  innerAudioContext.src = props.src;
-  innerAudioContext.autoplay = true;
-  innerAudioContext.loop = true;
+  // 1. 初始化时，先尝试播放（如果还没有播放）
+  // 这里的 play 内部有检查，如果已经在播就不会重头开始
+  bgmManager.play(props.src);
 
-  innerAudioContext.onPlay(() => { isPlaying.value = true; });
-  innerAudioContext.onPause(() => { isPlaying.value = false; });
-  innerAudioContext.onError((e) => { console.error('BGM Error', e); isPlaying.value = false; });
-  
-  // 尝试播放
-  innerAudioContext.play();
+  // 2. 同步状态：组件挂载时，看看现在是不是正在播
+  isPlaying.value = bgmManager.isMusicOn;
 });
 
-onUnmounted(() => {
-  if (innerAudioContext) innerAudioContext.destroy();
-});
+// 注意：这里删除了 onUnmounted 的 destroy 逻辑。
+// 因为音乐是全局的，离开页面（组件销毁）时，音乐不应该停！
 
 const toggleMusic = () => {
-  if (isPlaying.value) innerAudioContext.pause();
-  else innerAudioContext.play();
+  // 调用全局管理器的切换静音功能
+  // 它会返回最新的状态（true=开，false=关）
+  isPlaying.value = bgmManager.toggleMute();
 };
 </script>
 
@@ -85,26 +79,26 @@ const toggleMusic = () => {
 }
 
 .music-icon {
-  width: 100%; /* 图标调大一点，更大气 */
+  width: 100%;
   height: 100%;
   z-index: 2;
   opacity: 0.9;
 }
 
-/* --- 核心魔法：纯 CSS 画的斜杠 --- */
+/* 纯 CSS 斜杠 */
 .music-slash {
   position: absolute;
   z-index: 10;
-  width: 4rpx;        /* 线条粗细 */
-  height: 70%;        /* 线条长度 */
-  background-color: #ffffff; /* 纯白线条 */
-  border-radius: 4rpx; /* 圆角 */
-  transform: rotate(45deg); /* 旋转45度 */
-  box-shadow: 0 0 4px rgba(0,0,0,0.5); /* 加一点阴影，防止背景太白看不清 */
-  pointer-events: none; /* 让点击穿透它 */
+  width: 4rpx;
+  height: 70%;
+  background-color: #ffffff;
+  border-radius: 4rpx;
+  transform: rotate(45deg);
+  box-shadow: 0 0 4px rgba(0,0,0,0.5);
+  pointer-events: none;
 }
 
-/* 播放时的呼吸动画 */
+/* 呼吸动画 */
 .playing .music-icon {
   animation: breathe 3s infinite ease-in-out;
 }
