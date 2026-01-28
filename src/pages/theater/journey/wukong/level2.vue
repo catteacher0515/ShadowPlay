@@ -1,13 +1,11 @@
 <template>
   <view class="level-container" :class="{ 'shake-screen': isShaking }">
-    <!-- 1. Background -->
     <image 
       class="bg-scene" 
       src="/static/images/theater/journey/wukong/bg-scene-liusha.png.png" 
       mode="aspectFill" 
     />
     
-    <!-- 2. Game Area (Bubbles) -->
     <view class="game-area" v-if="gameStage === 'playing'">
       <view 
         v-for="bubble in bubbles" 
@@ -27,7 +25,6 @@
       </view>
     </view>
     
-    <!-- 3. Progress HUD (Collected Items) -->
     <view class="progress-hud" v-if="gameStage === 'playing'">
       <view class="hud-title">法宝收集 {{ collectedCount }}/4</view>
       <view class="hud-slots">
@@ -42,10 +39,8 @@
       </view>
     </view>
 
-    <!-- 4. Dialog Layer (AVG System) -->
     <view class="dialog-layer" v-if="showDialog" @click="nextDialog">
       
-      <!-- Character Sprite Layer -->
       <view class="sprite-stage">
         <image 
           v-if="currentLine.sprite"
@@ -83,23 +78,46 @@
       </view>
     </view>
     
-    <!-- 5. Victory Modal -->
     <view v-if="gameStage === 'finished'" class="victory-modal">
-      <view class="victory-content">
-        <text class="victory-title">灵物归位</text>
+      <view class="modal-mask"></view>
+      
+      <view class="treasure-box-container">
+        <view class="box-bg-css"></view>
+        
+        <view class="box-header">
+          <view class="header-bg-css"></view>
+          <text class="header-text">灵物归位</text>
+        </view>
+    
+        <view class="items-grid">
+          <view class="item-slot slot-1">
+            <view class="slot-glow"></view>
+            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-shaseng-weapon.png.png" mode="aspectFit" />
+            <text class="item-name">降妖宝杖</text>
+          </view>
+          <view class="item-slot slot-2">
+            <view class="slot-glow"></view>
+            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-shaseng-necklace.png.png" mode="aspectFit" />
+            <text class="item-name">骷髅项链</text>
+          </view>
+          <view class="item-slot slot-3">
+            <view class="slot-glow"></view>
+            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-shaseng-robe.png.png" mode="aspectFit" />
+            <text class="item-name">罗汉僧袍</text>
+          </view>
+          <view class="item-slot slot-4">
+            <view class="slot-glow"></view>
+            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-shaseng-shoes.png.png" mode="aspectFit" />
+            <text class="item-name">罗汉草鞋</text>
+          </view>
+        </view>
+    
         <text class="victory-desc">已集齐【卷帘大将】真身组件</text>
         
-        <view class="reward-grid">
-           <view v-for="item in targetItems" :key="item.id" class="reward-item">
-             <image :src="item.src" mode="aspectFit" />
-           </view>
-        </view>
-
-        <button class="confirm-btn" @click="goBack">归队</button>
+        <button class="confirm-btn" @click="goBack">收入影箱，继续征途</button>
       </view>
     </view>
     
-    <!-- Red Flash Overlay for Trap -->
     <view class="trap-flash" :class="{ active: isShaking }"></view>
   </view>
 </template>
@@ -449,7 +467,7 @@ const goBack = () => {
   position: absolute; bottom: 0; height: 250px; transition: all 0.3s ease-out;
   
   &.pos-left { left: -10px; animation: slideInLeft 0.4s forwards; }
-  &.pos-right { right: -10px; animation: slideInRight 0.4s forwards; }
+  &.pos-right { right: -0px; animation: slideInRight 0.4s forwards; }
   &.fade-out { opacity: 0; transform: scale(0.95); }
   &.fade-in { opacity: 1; transform: scale(1); }
 }
@@ -495,26 +513,91 @@ const goBack = () => {
   }
 }
 
-/* --- Victory Modal --- */
+/* =========================================
+   ✨ 5. 结算弹窗 (CSS 纯享版)
+   适配缺失图片，保持 Level 1 的灵匣开启效果
+========================================= */
 .victory-modal {
-  position: absolute; inset: 0; background: rgba(0,0,0,0.8);
-  display: flex; align-items: center; justify-content: center; z-index: 300;
-}
-.victory-content {
-  background: #1a1a1a; border: 2px solid #FFD700; padding: 30px; border-radius: 12px;
-  display: flex; flex-direction: column; align-items: center; box-shadow: 0 0 30px rgba(255,215,0,0.3);
-}
-.victory-title { color: #FFD700; font-size: 24px; font-weight: bold; margin-bottom: 10px; }
-.victory-desc { color: #fff; margin-bottom: 20px; opacity: 0.8; }
-.reward-grid {
-  display: flex; gap: 10px; margin-bottom: 20px;
-}
-.reward-item {
-  width: 50px; height: 50px; background: rgba(255,255,255,0.1); border-radius: 8px; border: 1px solid #FFD700;
+  position: fixed; inset: 0; z-index: 300;
   display: flex; align-items: center; justify-content: center;
-  image { width: 80%; height: 80%; }
+  padding: 20px; perspective: 1000px;
+}
+.modal-mask {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+  animation: fadeIn 0.5s ease-out forwards;
+}
+.treasure-box-container {
+  position: relative; width: 90%; max-width: 400px; padding: 40px 20px 30px;
+  border-radius: 16px; display: flex; flex-direction: column; align-items: center;
+  /* 关键：允许标题溢出 */
+  overflow: visible !important;
+  animation: boxPopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.2s; opacity: 0;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+/* 盒子 CSS 背景 */
+.box-bg-css {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, #2c2c2c, #000);
+  border: 3px solid #FFD700; border-radius: 16px; z-index: -1;
+  box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.1);
+}
+/* 标题栏 (位置上调 -50px) */
+.box-header {
+  position: absolute; top: -50px; width: 160px; height: 50px;
+  display: flex; align-items: center; justify-content: center; z-index: 10;
+}
+/* CSS 绘制标题背景 */
+.header-bg-css {
+  position: absolute; width: 100%; height: 100%;
+  background: #000; border: 2px solid #FFD700; border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.header-text { position: relative; color: #FFD700; font-size: 20px; font-weight: bold; letter-spacing: 4px; }
+
+.items-grid {
+  position: relative; z-index: 5;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0 25px; width: 100%;
+}
+.item-slot {
+  position: relative; display: flex; flex-direction: column; align-items: center;
+  opacity: 0; transform: translateY(30px);
+}
+.slot-1 { animation: itemPopUp 0.5s ease-out forwards 0.5s; }
+.slot-2 { animation: itemPopUp 0.5s ease-out forwards 0.7s; }
+.slot-3 { animation: itemPopUp 0.5s ease-out forwards 0.9s; }
+.slot-4 { animation: itemPopUp 0.5s ease-out forwards 1.1s; }
+
+.item-icon {
+  width: 80px; height: 80px; position: relative; z-index: 2;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  animation: itemFloat 3s ease-in-out infinite alternate;
+}
+.slot-glow {
+  position: absolute; top: 50%; left: 50%; width: 100px; height: 100px;
+  transform: translate(-50%, -60%);
+  background: radial-gradient(circle, rgba(255,215,0,0.6) 0%, transparent 70%);
+  z-index: 1; opacity: 0.8; animation: glowPulse 2s ease-in-out infinite alternate;
+}
+.item-name { margin-top: 8px; font-size: 12px; color: #FFD700; opacity: 0.9; text-shadow: 0 1px 2px #000; }
+.victory-desc {
+  position: relative; z-index: 5;
+  color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 25px;
+  text-align: center; opacity: 0; animation: fadeIn 0.5s ease-out forwards 1.3s;
 }
 .confirm-btn {
-  background: #FFD700; color: #000; font-weight: bold; border-radius: 20px; padding: 0 30px;
+  position: relative; z-index: 5;
+  background: linear-gradient(to bottom, #FFD700, #FFA000);
+  color: #000; font-weight: bold; font-size: 16px;
+  border-radius: 25px; padding: 8px 40px; border: none;
+  box-shadow: 0 4px 15px rgba(255, 160, 0, 0.5);
+  animation: btnPulse 2s infinite alternate;
+  opacity: 0; animation: fadeIn 0.5s ease-out forwards 1.5s;
 }
+
+@keyframes fadeIn { to { opacity: 1; } }
+@keyframes boxPopIn { to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes itemPopUp { to { opacity: 1; transform: translateY(0); } }
+@keyframes itemFloat { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+@keyframes glowPulse { from { opacity: 0.5; transform: translate(-50%, -60%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -60%) scale(1.1); } }
+@keyframes btnPulse { from { box-shadow: 0 4px 15px rgba(255, 160, 0, 0.5); } to { box-shadow: 0 8px 25px rgba(255, 160, 0, 0.8); } }
 </style>
