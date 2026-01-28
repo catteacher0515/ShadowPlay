@@ -6,12 +6,11 @@
       
       <view class="turntable" :class="{ 'is-spinning': isPlaying }">
         <image class="disc-base" src="/static/images/wiki/vocal/ui-disc-skin.png.png" mode="aspectFit" />
-        
         <image :key="currentTrack.id" class="disc-cover" :src="currentTrack.cover" mode="aspectFit" />
       </view>
 
       <view class="control-stick-wrapper" :class="{ 'stick-active': isPlaying }">
-         <image class="stick-img" src="/static/images/wiki/vocal/ui-control-stick.png.png" mode="heightFix" />
+          <image class="stick-img" src="/static/images/wiki/vocal/ui-control-stick.png.png" mode="heightFix" />
       </view>
 
     </view>
@@ -49,39 +48,41 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+// ✨✨✨ 引入全局 BGM 管理器 ✨✨✨
+import { bgmManager } from '@/utils/bgm.js';
 
 const safeAreaTop = ref(40);
 const isPlaying = ref(false);
 const currentIndex = ref(0);
 
-// 🎵 Playlist Configuration
+// 🎵 播放列表配置
 const tracks = [
   {
     id: 'monkey',
     name: '掐嗓 · 借扇',
     desc: '孙悟空大战铁扇公主 (武戏)',
     cover: '/static/images/wiki/vocal/char-shadow-monkey.png.png', 
-    // 即使链接失效，代码也会忽略错误继续演示动画
-    audio: 'https://music.163.com/song/media/outer/url?id=1359436324.mp3' 
+    audio: '/static/audio/wiki/vocal/vocal-monkey.mp3' 
   },
   {
     id: 'snake',
     name: '断桥 · 情深',
     desc: '白娘子与许仙 (文戏)',
     cover: '/static/images/wiki/vocal/char-shadow-snake.png.png', 
-    audio: 'https://music.163.com/song/media/outer/url?id=5264844.mp3' 
+    audio: '/static/audio/wiki/vocal/vocal-snake.mp3' 
   },
   {
     id: 'zhuge',
     name: '空城 · 抚琴',
     desc: '诸葛亮智退司马懿 (生角)',
     cover: '/static/images/wiki/vocal/char-shadow-zhuge.png.png', 
-    audio: 'https://music.163.com/song/media/outer/url?id=1860266596.mp3' 
+    audio: '/static/audio/wiki/vocal/vocal-zhuge.mp3' 
   }
 ];
 
 const currentTrack = computed(() => tracks[currentIndex.value]);
 
+// 唱腔页面的专属音频实例
 let innerAudioContext = null;
 
 // Audio Management
@@ -90,31 +91,25 @@ const initAudio = () => {
   innerAudioContext = uni.createInnerAudioContext();
   innerAudioContext.autoplay = false;
   
-  // ✅ 监听播放结束：只有音频真的播完才归位
   innerAudioContext.onEnded(() => {
     console.log('Audio Ended');
     isPlaying.value = false;
   });
   
-  // 🛡️ 核心修复：监听错误，但不中断演出 (忽略 500/解码错误)
   innerAudioContext.onError((res) => {
-    console.error('⚠️ Audio Error (Ignored for Demo):', res.errMsg);
-    // 注意：此处不再重置 isPlaying，保证动画继续运行
+    console.error('⚠️ Audio Error:', res.errMsg);
+    uni.showToast({ title: '音频加载失败', icon: 'none' });
+    isPlaying.value = false; 
   });
 };
 
 // Switching Logic
 const changeTrack = (newIndex) => {
-  // 1. 切歌时，先抬起唱针 (符合物理逻辑)
   isPlaying.value = false;
   if (innerAudioContext) {
     innerAudioContext.stop();
   }
-  
-  // 2. Update Index
   currentIndex.value = newIndex;
-  
-  // 3. 等待用户再次点击播放
 };
 
 const nextTrack = () => {
@@ -133,24 +128,22 @@ const togglePlay = () => {
   if (!innerAudioContext) initAudio();
 
   if (isPlaying.value) {
-    // 暂停
+    // 暂停唱腔
     innerAudioContext.pause();
     isPlaying.value = false;
   } else {
-    // 播放
-    // 尝试播放音频，但无论音频是否成功，强制 UI 进入播放状态
+    // 播放唱腔
     if (currentTrack.value.audio) {
       if (innerAudioContext.src !== currentTrack.value.audio) {
          innerAudioContext.src = currentTrack.value.audio;
       }
-      // 延迟播放避免竞争条件
       setTimeout(() => {
         innerAudioContext.play(); 
       }, 50);
+      isPlaying.value = true;
+    } else {
+      uni.showToast({ title: '暂无音频源', icon: 'none' });
     }
-    
-    // ✅ 强制开启 UI 动画（解决唱针缩回问题）
-    isPlaying.value = true;
   }
 };
 
@@ -159,18 +152,31 @@ const goBack = () => {
 };
 
 onMounted(() => {
+  // 1. 适配刘海屏
   const menuButton = uni.getMenuButtonBoundingClientRect();
   if (menuButton) {
     safeAreaTop.value = menuButton.top;
   }
+  
+  // 2. 初始化当前页面的音频播放器
   initAudio();
+
+  // ✨✨✨ 3. 关键：进入唱腔页面时，暂停全局 BGM ✨✨✨
+  console.log('Vocal Page Mounted: Pausing Global BGM');
+  bgmManager.pause();
 });
 
 onUnmounted(() => {
+  // 1. 销毁当前页面的音频实例
   if (innerAudioContext) {
     innerAudioContext.destroy();
     innerAudioContext = null;
   }
+
+  // ✨✨✨ 2. 关键：离开唱腔页面时，恢复全局 BGM ✨✨✨
+  // bgmManager.play() 会自动检查 isMusicOn 状态，如果用户没关静音，就会恢复播放
+  console.log('Vocal Page Unmounted: Resuming Global BGM');
+  bgmManager.play();
 });
 </script>
 
@@ -208,7 +214,7 @@ onUnmounted(() => {
   width: 80%; height: 80%; position: absolute;
   mix-blend-mode: multiply; 
   opacity: 0.95;
-  transition: opacity 0.3s ease; /* Fade effect for switching covers */
+  transition: opacity 0.3s ease; 
 }
 
 /* Control Stick */
@@ -244,7 +250,6 @@ onUnmounted(() => {
 .switch-btn {
   width: 50px; height: 50px;
   display: flex; align-items: center; justify-content: center;
-  /* Glassmorphism for buttons */
   background: rgba(255,255,255,0.05); border-radius: 50%;
   backdrop-filter: blur(4px);
   margin: 0 15px;
