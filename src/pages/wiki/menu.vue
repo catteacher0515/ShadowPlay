@@ -115,7 +115,11 @@
      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); 
  } 
  .text-left { left: 30px; } 
- .text-right { right: 30px; } 
+ .text-right { 
+    right: 15px;      /* 1. 向右移：数字越小越靠右 (原30px -> 15px) */
+    height: 100px;    /* 2. 缩小：覆盖掉默认的 140px，改小一点 */
+    top: 40px;        /* 3. 垂直居中修正：因为字变小了，为了视觉平衡，稍微往下压一点 (原20px) */
+}
  
  .card-overlay { 
      position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
