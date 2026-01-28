@@ -28,6 +28,13 @@
         "enablePullDownRefresh": false
       }
     },
+        {
+      "path": "pages/theater/journey/wukong/level3",
+      "style": {
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
     {
       "path": "pages/theater/journey/index",
       "style": {

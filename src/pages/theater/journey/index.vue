@@ -112,7 +112,7 @@ const enterLevel = (index) => {
       });
     } 
     else if (index === 1) {
-      // ✨✨✨ 第二关：流沙河 (已打通) ✨✨✨
+      // 第二关：流沙河
       uni.navigateTo({
         url: '/pages/theater/journey/wukong/level2',
         fail: (err) => {
@@ -122,8 +122,14 @@ const enterLevel = (index) => {
       });
     }
     else if (index === 2) {
-      // 第三关：女儿国 (还没做，先提示)
-      uni.showToast({ title: '女儿国关卡正在施工...', icon: 'none' });
+      // ✨✨✨ 第三关：女儿国 (已打通) ✨✨✨
+      uni.navigateTo({
+        url: '/pages/theater/journey/wukong/level3',
+        fail: (err) => {
+          console.error('跳转Level 3失败:', err);
+          uni.showToast({ title: '页面未找到', icon: 'none' });
+        }
+      });
     }
   }, 500); 
 };
