@@ -65,10 +65,45 @@
     </view>
     
     <view v-if="gameStage === 'finished'" class="victory-modal">
-      <view class="victory-content">
-        <text class="victory-title">收服成功</text>
-        <text class="victory-desc">获得伙伴：【天蓬元帅】</text>
-        <button class="confirm-btn" @click="goBack">归队</button>
+      <view class="modal-mask"></view>
+      
+      <view class="treasure-box-container">
+        <image class="box-bg" src="/static/images/theater/journey/wukong/ui-dialog-panel.png.jpg" mode="scaleToFill" />
+        
+        <view class="box-header">
+          <image class="header-bg" src="/static/images/theater/journey/wukong/ui-name-tag.png.jpg" mode="scaleToFill" />
+          <text class="header-text">灵物归位</text>
+        </view>
+    
+        <view class="items-grid">
+          <view class="item-slot slot-1">
+            <view class="slot-glow"></view>
+            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-bajie-hand.png.png" mode="aspectFit" />
+            <text class="item-name">九齿钉耙</text>
+          </view>
+          
+          <view class="item-slot slot-2">
+            <view class="slot-glow"></view>
+            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-bajie-body.png.png" mode="aspectFit" />
+            <text class="item-name">天蓬战甲</text>
+          </view>
+          
+          <view class="item-slot slot-3">
+            <view class="slot-glow"></view>
+            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-bajie-head.png.png" mode="aspectFit" />
+            <text class="item-name">行者僧帽</text>
+          </view>
+          
+          <view class="item-slot slot-4">
+            <view class="slot-glow"></view>
+            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-bajie-leg.png.png" mode="aspectFit" />
+            <text class="item-name">踏云布鞋</text>
+          </view>
+        </view>
+    
+        <text class="victory-desc">已集齐【天蓬元帅】真身组件</text>
+        
+        <button class="confirm-btn" @click="goBack">收入影箱，继续征途</button>
       </view>
     </view>
   </view>
@@ -84,7 +119,7 @@ const screenHeight = uni.getSystemInfoSync().windowHeight;
 // --- 游戏状态管理 ---
 const gameStage = ref('intro'); 
 
-// --- 资源映射 (保持不变，既然改名太累，我们就在代码里兼容) ---
+// --- 资源映射 ---
 const ASSETS = {
   WUKONG_PROBE: '/static/images/theater/journey/wukong/sprite-wukong-probe.png.png',
   WUKONG_POINT: '/static/images/theater/journey/wukong/sprite-wukong-point.png.png',
@@ -295,13 +330,11 @@ const finishGame = () => {
   }
 };
 
-// ✨ 修复点 3：智能返回逻辑
 const goBack = () => {
   const pages = getCurrentPages();
   if (pages.length > 1) {
     uni.navigateBack();
   } else {
-    // 如果没有上一页（比如直接在开发工具编译进入），则重定向回大厅或地图页
     uni.redirectTo({ url: '/pages/theater/journey/index' });
   }
 };
@@ -348,7 +381,6 @@ const goBack = () => {
 /* 立绘舞台 */
 .sprite-stage {
   position: absolute;
-  /* ✨ 调整：容器高度减小，位置微调 */
   bottom: 140px; 
   left: 0; width: 100%; 
   height: 250px; 
@@ -357,20 +389,20 @@ const goBack = () => {
   overflow: hidden;
 }
 
+/* ✨ 修复点：立绘参数严格按照你的要求设置 */
 .char-sprite {
   position: absolute;
   bottom: 0; 
-  /* ✨ 修复点 2：立绘高度设为 200px */
-  height: 200px; 
+  height: 250px; 
   transition: all 0.3s ease-out;
   
   &.pos-left {
-    left: 20px; /* 稍微靠内一点 */
+    left: 5px; 
     animation: slideInLeft 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
   
   &.pos-right {
-    right: 20px;
+    right: 5px;
     animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
   
@@ -454,28 +486,147 @@ const goBack = () => {
   }
 }
 
+/* =========================================
+   ✨ 结算弹窗样式 (最终修正版) ✨
+========================================= */
+
 .victory-modal {
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,0.8);
+  position: fixed; inset: 0; z-index: 300;
   display: flex; align-items: center; justify-content: center;
-  z-index: 300;
+  perspective: 1000px;
+  padding: 20px; /* 增加 padding 防止紧贴屏幕边缘 */
 }
 
-.victory-content {
-  background: #1a1a1a; border: 2px solid #FFD700;
-  padding: 30px; border-radius: 12px;
+.modal-mask {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.treasure-box-container {
+  position: relative;
+  width: 90%; max-width: 400px;
+  padding: 40px 20px 30px;
+  border-radius: 16px;
   display: flex; flex-direction: column; align-items: center;
-  box-shadow: 0 0 30px rgba(255,215,0,0.3);
+  /* ✨ 关键修复：允许子元素溢出（解决标题被切） */
+  overflow: visible !important; 
+  opacity: 0; transform: scale(0.8) translateY(20px);
+  animation: boxPopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.2s;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-.victory-title {
-  color: #FFD700; font-size: 24px; font-weight: bold; margin-bottom: 10px;
+.box-bg {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: -1; filter: brightness(0.7) sepia(0.2);
+  border-radius: 16px;
+  /* ✨ 关键修复：移除 CSS 边框，防止双重边框和干扰 */
+  /* border: 3px solid #FFD700; <-- 已删除 */
 }
+
+.box-header {
+  /* ✨ 关键修复：位置大幅上调，彻底解决重叠 */
+  position: absolute; top: -50px; 
+  width: 160px; height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 10;
+  
+  .header-bg { position: absolute; width: 100%; height: 100%; }
+  .header-text {
+    position: relative; color: #FFD700; font-size: 20px; font-weight: bold;
+    text-shadow: 0 2px 4px #000; letter-spacing: 4px;
+  }
+}
+
+.items-grid {
+  position: relative; z-index: 5;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 30px 0 25px;
+  width: 100%;
+}
+
+.item-slot {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  opacity: 0; transform: translateY(30px);
+}
+
+.item-icon {
+  width: 80px; height: 80px;
+  position: relative; z-index: 2;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  animation: itemFloat 3s ease-in-out infinite alternate;
+}
+
+.slot-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 100px; height: 100px;
+  transform: translate(-50%, -60%);
+  background: radial-gradient(circle, rgba(255,215,0,0.6) 0%, transparent 70%);
+  z-index: 1;
+  opacity: 0.8;
+  animation: glowPulse 2s ease-in-out infinite alternate;
+}
+
+.item-name {
+  margin-top: 8px;
+  font-size: 12px; color: #FFD700; opacity: 0.9;
+  text-shadow: 0 1px 2px #000;
+}
+
+.slot-1 { animation: itemPopUp 0.5s ease-out forwards 0.5s; }
+.slot-2 { animation: itemPopUp 0.5s ease-out forwards 0.7s; }
+.slot-3 { animation: itemPopUp 0.5s ease-out forwards 0.9s; }
+.slot-4 { animation: itemPopUp 0.5s ease-out forwards 1.1s; }
+
 .victory-desc {
-  color: #fff; margin-bottom: 20px; opacity: 0.8;
+  position: relative; z-index: 5;
+  color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 25px;
+  text-align: center;
+  opacity: 0; animation: fadeIn 0.5s ease-out forwards 1.3s;
 }
+
 .confirm-btn {
-  background: #FFD700; color: #000; font-weight: bold;
-  border-radius: 20px; padding: 0 30px;
+  position: relative; z-index: 5;
+  background: linear-gradient(to bottom, #FFD700, #FFA000);
+  color: #000; font-weight: bold; font-size: 16px;
+  border-radius: 25px; padding: 8px 40px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(255, 160, 0, 0.5);
+  animation: btnPulse 2s infinite alternate;
+  opacity: 0; animation: fadeIn 0.5s ease-out forwards 1.5s, btnPulse 2s infinite alternate 1.5s;
+  
+  &:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(255, 160, 0, 0.3); }
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes boxPopIn {
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes itemPopUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes itemFloat {
+  from { transform: translateY(0); }
+  to { transform: translateY(-8px); }
+}
+
+@keyframes glowPulse {
+  from { opacity: 0.5; transform: translate(-50%, -60%) scale(0.8); }
+  to { opacity: 1; transform: translate(-50%, -60%) scale(1.1); }
+}
+
+@keyframes btnPulse {
+  from { box-shadow: 0 4px 15px rgba(255, 160, 0, 0.5); }
+  to { box-shadow: 0 8px 25px rgba(255, 160, 0, 0.8); }
 }
 </style>
