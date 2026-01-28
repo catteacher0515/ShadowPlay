@@ -87,12 +87,39 @@ const goBack = () => uni.navigateBack();
 
 const enterLevel = (index) => {
   const level = levels.value[index];
+  
+  // 1. 拦截锁定关卡
   if (level.isLocked) {
     uni.showToast({ title: '请先通关前序关卡', icon: 'none' });
     return;
   }
-  // 这里可以根据 index 跳转到不同的游戏页面
-  uni.showToast({ title: `前往：${level.name}`, icon: 'loading' });
+  
+  // 2. 显示加载提示
+  uni.showToast({ title: `前往：${level.name}`, icon: 'loading', duration: 1000 });
+  
+  // 3. ✨✨✨ 核心修复：延迟后执行跳转 ✨✨✨
+  setTimeout(() => {
+    // 根据索引判断去哪一关
+    if (index === 0) {
+      // 第一关：高老庄
+      uni.navigateTo({
+        url: '/pages/theater/journey/wukong/level1',
+        fail: (err) => {
+          // 如果还是跳不过去，这里会打印真实原因
+          console.error('跳转失败，请检查 pages.json 路径:', err);
+          uni.showToast({ title: '页面路径错误', icon: 'none' });
+        }
+      });
+    } 
+    else if (index === 1) {
+      // 第二关：流沙河 (还没做，先提示)
+      uni.showToast({ title: '流沙河关卡正在施工...', icon: 'none' });
+    }
+    else if (index === 2) {
+      // 第三关：女儿国 (还没做，先提示)
+      uni.showToast({ title: '女儿国关卡正在施工...', icon: 'none' });
+    }
+  }, 500); // 延迟 500ms 让用户看清 loading
 };
 </script>
 
