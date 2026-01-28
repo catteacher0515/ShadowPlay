@@ -54,21 +54,16 @@
         />
       </view>
 
-      <view class="skip-btn" @click.stop="skipStory">
-        <image src="/static/images/theater/journey/wukong/btn-story-skip.png.jpg" mode="aspectFit" />
+      <view class="btn-skip-css" @click.stop="skipStory">
+        <text>跳过</text>
       </view>
 
-      <view class="dialog-box">
-        <image class="dialog-bg" src="/static/images/theater/journey/wukong/ui-dialog-panel.png.jpg" mode="scaleToFill" />
-        
-        <view class="name-tag">
-          <image class="tag-bg" src="/static/images/theater/journey/wukong/ui-name-tag.png.jpg" mode="scaleToFill" />
-          <text class="name-text">{{ currentLine.name }}</text>
+      <view class="dialog-box-css">
+        <view class="name-tag-css">
+          <text>{{ currentLine.name }}</text>
         </view>
-
-        <text class="dialog-text">{{ displayedText }}</text>
-        
-        <view class="next-indicator">▼</view>
+        <text class="dialog-text-css">{{ displayedText }}</text>
+        <view class="next-indicator-css">▼</view>
       </view>
     </view>
 
@@ -79,42 +74,31 @@
     </view>
     
     <view v-if="gameStage === 'finished'" class="victory-modal">
-      <view class="modal-mask"></view>
-      
-      <view class="treasure-box-container">
-        <view class="box-bg-css"></view>
+      <view class="victory-content-css">
+        <view class="modal-border-inner"></view>
+        <text class="victory-title">灵物归位</text>
+        <text class="victory-desc">已集齐【卷帘大将】真身组件</text>
         
-        <view class="box-header">
-          <view class="header-bg-css"></view>
-          <text class="header-text">灵物归位</text>
-        </view>
-    
-        <view class="items-grid">
-          <view class="item-slot slot-1">
-            <view class="slot-glow"></view>
-            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-shaseng-weapon.png.png" mode="aspectFit" />
+        <view class="reward-grid">
+          <view class="reward-item-css">
+            <image src="/static/images/theater/journey/wukong/icon-shaseng-weapon.png.png" mode="aspectFit" />
             <text class="item-name">降妖宝杖</text>
           </view>
-          <view class="item-slot slot-2">
-            <view class="slot-glow"></view>
-            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-shaseng-necklace.png.png" mode="aspectFit" />
+          <view class="reward-item-css">
+            <image src="/static/images/theater/journey/wukong/icon-shaseng-necklace.png.png" mode="aspectFit" />
             <text class="item-name">骷髅项链</text>
           </view>
-          <view class="item-slot slot-3">
-            <view class="slot-glow"></view>
-            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-shaseng-robe.png.png" mode="aspectFit" />
+          <view class="reward-item-css">
+            <image src="/static/images/theater/journey/wukong/icon-shaseng-robe.png.png" mode="aspectFit" />
             <text class="item-name">罗汉僧袍</text>
           </view>
-          <view class="item-slot slot-4">
-            <view class="slot-glow"></view>
-            <image class="item-icon" src="/static/images/theater/journey/wukong/icon-shaseng-shoes.png.png" mode="aspectFit" />
+          <view class="reward-item-css">
+            <image src="/static/images/theater/journey/wukong/icon-shaseng-shoes.png.png" mode="aspectFit" />
             <text class="item-name">罗汉草鞋</text>
           </view>
         </view>
-    
-        <text class="victory-desc">已集齐【卷帘大将】真身组件</text>
         
-        <button class="confirm-btn" @click="goBack">收入影箱，继续征途</button>
+        <button class="confirm-btn-css" @click="goBack">收入影箱，继续征途</button>
       </view>
     </view>
     
@@ -357,7 +341,12 @@ const finishGame = () => {
 };
 
 const goBack = () => {
-  uni.navigateBack();
+  const pages = getCurrentPages();
+  if (pages.length > 1) {
+    uni.navigateBack();
+  } else {
+    uni.redirectTo({ url: '/pages/theater/journey/index' });
+  }
 };
 </script>
 
@@ -452,7 +441,7 @@ const goBack = () => {
   image { width: 80%; height: 80%; }
 }
 
-/* --- Dialog UI (Reused from Level 1) --- */
+/* --- Dialog UI (Pure CSS Upgrade) --- */
 .dialog-layer {
   position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
   z-index: 100; pointer-events: auto;
@@ -475,32 +464,44 @@ const goBack = () => {
 @keyframes slideInLeft { from { transform: translateX(-50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 @keyframes slideInRight { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-.skip-btn {
-  position: absolute; top: 60px; right: 20px; width: 80px; height: 40px; z-index: 102;
-  image { width: 100%; height: 100%; }
+/* --- Pure CSS 跳过按钮 --- */
+.btn-skip-css {
+  position: absolute; top: 60px; right: 20px;
+  background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 14px; z-index: 102;
+  
+  &:active { background: rgba(0,0,0,0.6); }
 }
 
-.dialog-box {
-  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-  width: 90%; height: 160px; z-index: 101;
+/* --- Pure CSS 对话框 (黑金风格) --- */
+.dialog-box-css {
+  position: absolute; bottom: 40px; left: 5%; width: 90%; height: 150px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 2px solid #5D4037;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.8);
+  z-index: 101;
 }
 
-.dialog-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
-
-.name-tag {
-  position: absolute; top: -15px; left: 0px; width: 120px; height: 40px; z-index: 2;
-  display: flex; align-items: center; justify-content: center;
-  .tag-bg { position: absolute; width: 100%; height: 100%; }
-  .name-text { position: relative; color: #fff; font-weight: bold; font-size: 14px; z-index: 3; text-shadow: 0 1px 2px #000; }
+.name-tag-css {
+  position: absolute; top: -18px; left: 10px;
+  background: #3E2723; border: 1px solid #8D6E63;
+  padding: 4px 20px; transform: skewX(-15deg);
+  
+  text {
+    display: block; transform: skewX(15deg);
+    color: #FFD700; font-weight: bold; font-size: 14px;
+  }
 }
 
-.dialog-text {
-  position: relative; z-index: 2; display: block; padding: 35px 25px 20px 25px;
-  font-size: 16px; color: #fff; line-height: 1.6; text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+.dialog-text-css {
+  display: block; padding: 25px 20px;
+  color: #E0E0E0; font-size: 16px; line-height: 1.6;
 }
 
-.next-indicator {
-  position: absolute; bottom: 15px; right: 20px; color: #FFD700; animation: blink 1s infinite;
+.next-indicator-css {
+  position: absolute; bottom: 10px; right: 15px; color: #FFD700;
+  animation: blink 1s infinite;
 }
 
 /* --- NavBar --- */
@@ -515,7 +516,7 @@ const goBack = () => {
 
 /* =========================================
    ✨ 5. 结算弹窗 (CSS 纯享版)
-   适配缺失图片，保持 Level 1 的灵匣开启效果
+   适配缺失图片，保持 Level 3 的灵匣开启效果
 ========================================= */
 .victory-modal {
   position: fixed; inset: 0; z-index: 300;
@@ -526,78 +527,62 @@ const goBack = () => {
   position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
   animation: fadeIn 0.5s ease-out forwards;
 }
-.treasure-box-container {
-  position: relative; width: 90%; max-width: 400px; padding: 40px 20px 30px;
-  border-radius: 16px; display: flex; flex-direction: column; align-items: center;
-  /* 关键：允许标题溢出 */
-  overflow: visible !important;
-  animation: boxPopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.2s; opacity: 0;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-/* 盒子 CSS 背景 */
-.box-bg-css {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(135deg, #2c2c2c, #000);
-  border: 3px solid #FFD700; border-radius: 16px; z-index: -1;
-  box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.1);
-}
-/* 标题栏 (位置上调 -50px) */
-.box-header {
-  position: absolute; top: -50px; width: 160px; height: 50px;
-  display: flex; align-items: center; justify-content: center; z-index: 10;
-}
-/* CSS 绘制标题背景 */
-.header-bg-css {
-  position: absolute; width: 100%; height: 100%;
-  background: #000; border: 2px solid #FFD700; border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-}
-.header-text { position: relative; color: #FFD700; font-size: 20px; font-weight: bold; letter-spacing: 4px; }
 
-.items-grid {
-  position: relative; z-index: 5;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0 25px; width: 100%;
+.victory-content-css {
+  width: 90%; max-width: 400px; background: #2C1608;
+  border: 2px solid #FFD700; border-radius: 12px;
+  padding: 40px 20px 30px;
+  display: flex; flex-direction: column; align-items: center;
+  position: relative;
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+  animation: boxPopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.2s;
+  opacity: 0; transform: scale(0.8) translateY(20px);
 }
-.item-slot {
-  position: relative; display: flex; flex-direction: column; align-items: center;
-  opacity: 0; transform: translateY(30px);
-}
-.slot-1 { animation: itemPopUp 0.5s ease-out forwards 0.5s; }
-.slot-2 { animation: itemPopUp 0.5s ease-out forwards 0.7s; }
-.slot-3 { animation: itemPopUp 0.5s ease-out forwards 0.9s; }
-.slot-4 { animation: itemPopUp 0.5s ease-out forwards 1.1s; }
 
-.item-icon {
-  width: 80px; height: 80px; position: relative; z-index: 2;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
-  animation: itemFloat 3s ease-in-out infinite alternate;
+.modal-border-inner {
+  position: absolute; inset: 6px; border: 1px dashed rgba(255,215,0,0.3);
+  border-radius: 8px; pointer-events: none;
 }
-.slot-glow {
-  position: absolute; top: 50%; left: 50%; width: 100px; height: 100px;
-  transform: translate(-50%, -60%);
-  background: radial-gradient(circle, rgba(255,215,0,0.6) 0%, transparent 70%);
-  z-index: 1; opacity: 0.8; animation: glowPulse 2s ease-in-out infinite alternate;
+
+.victory-title {
+  color: #FFD700; font-size: 24px; font-weight: bold; margin-bottom: 8px;
+  letter-spacing: 4px; text-shadow: 0 2px 4px #000;
 }
-.item-name { margin-top: 8px; font-size: 12px; color: #FFD700; opacity: 0.9; text-shadow: 0 1px 2px #000; }
 .victory-desc {
-  position: relative; z-index: 5;
-  color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 25px;
-  text-align: center; opacity: 0; animation: fadeIn 0.5s ease-out forwards 1.3s;
+  color: #A1887F; font-size: 14px; margin-bottom: 25px;
 }
-.confirm-btn {
-  position: relative; z-index: 5;
+
+.reward-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; width: 100%;
+}
+
+.reward-item-css {
+  display: flex; flex-direction: column; align-items: center;
+  opacity: 0; animation: itemPopUp 0.5s ease-out forwards;
+  
+  image { 
+    width: 60px; height: 60px; margin-bottom: 5px; 
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    animation: itemFloat 3s ease-in-out infinite alternate;
+  }
+  .item-name { color: #D7CCC8; font-size: 12px; }
+  
+  &:nth-child(1) { animation-delay: 0.5s; }
+  &:nth-child(2) { animation-delay: 0.7s; }
+  &:nth-child(3) { animation-delay: 0.9s; }
+  &:nth-child(4) { animation-delay: 1.1s; }
+}
+
+.confirm-btn-css {
   background: linear-gradient(to bottom, #FFD700, #FFA000);
-  color: #000; font-weight: bold; font-size: 16px;
-  border-radius: 25px; padding: 8px 40px; border: none;
-  box-shadow: 0 4px 15px rgba(255, 160, 0, 0.5);
-  animation: btnPulse 2s infinite alternate;
-  opacity: 0; animation: fadeIn 0.5s ease-out forwards 1.5s;
+  color: #3E2723; font-weight: bold; border-radius: 25px;
+  padding: 0 40px; box-shadow: 0 4px 10px rgba(255, 160, 0, 0.4);
+  border: none;
+  opacity: 0; animation: fadeIn 0.5s ease-out forwards 1.3s;
 }
 
 @keyframes fadeIn { to { opacity: 1; } }
 @keyframes boxPopIn { to { opacity: 1; transform: scale(1) translateY(0); } }
 @keyframes itemPopUp { to { opacity: 1; transform: translateY(0); } }
-@keyframes itemFloat { from { transform: translateY(0); } to { transform: translateY(-8px); } }
-@keyframes glowPulse { from { opacity: 0.5; transform: translate(-50%, -60%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -60%) scale(1.1); } }
-@keyframes btnPulse { from { box-shadow: 0 4px 15px rgba(255, 160, 0, 0.5); } to { box-shadow: 0 8px 25px rgba(255, 160, 0, 0.8); } }
+@keyframes itemFloat { from { transform: translateY(0); } to { transform: translateY(-5px); } }
 </style>
