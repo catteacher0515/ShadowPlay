@@ -38,6 +38,10 @@
         <image class="node-icon" src="/static/images/theater/journey/wukong/node-liusha.png.png" mode="aspectFit" />
         <view class="node-label">流沙河</view>
         <view v-if="levels[1].isLocked" class="lock-overlay">🔒</view>
+        
+        <view v-if="!levels[1].isLocked && !levels[1].isCleared" class="player-marker">
+          <view class="arrow-down-gold"></view>
+        </view>
       </view>
 
       <view 
@@ -76,6 +80,7 @@ onShow(() => {
     if (clearedIds.includes(level.id)) {
       level.isCleared = true;
       level.isLocked = false;
+      // 解锁下一关
       if (index + 1 < levels.value.length) {
         levels.value[index + 1].isLocked = false;
       }
@@ -95,31 +100,32 @@ const enterLevel = (index) => {
   }
   
   // 2. 显示加载提示
-  uni.showToast({ title: `前往：${level.name}`, icon: 'loading', duration: 1000 });
+  uni.showToast({ title: `前往：${level.name}`, icon: 'loading', duration: 500 });
   
-  // 3. ✨✨✨ 核心修复：延迟后执行跳转 ✨✨✨
+  // 3. 延迟后执行跳转
   setTimeout(() => {
-    // 根据索引判断去哪一关
     if (index === 0) {
       // 第一关：高老庄
       uni.navigateTo({
         url: '/pages/theater/journey/wukong/level1',
-        fail: (err) => {
-          // 如果还是跳不过去，这里会打印真实原因
-          console.error('跳转失败，请检查 pages.json 路径:', err);
-          uni.showToast({ title: '页面路径错误', icon: 'none' });
-        }
+        fail: (err) => console.error('跳转Level 1失败:', err)
       });
     } 
     else if (index === 1) {
-      // 第二关：流沙河 (还没做，先提示)
-      uni.showToast({ title: '流沙河关卡正在施工...', icon: 'none' });
+      // ✨✨✨ 第二关：流沙河 (已打通) ✨✨✨
+      uni.navigateTo({
+        url: '/pages/theater/journey/wukong/level2',
+        fail: (err) => {
+          console.error('跳转Level 2失败:', err);
+          uni.showToast({ title: '页面未找到', icon: 'none' });
+        }
+      });
     }
     else if (index === 2) {
       // 第三关：女儿国 (还没做，先提示)
       uni.showToast({ title: '女儿国关卡正在施工...', icon: 'none' });
     }
-  }, 500); // 延迟 500ms 让用户看清 loading
+  }, 500); 
 };
 </script>
 

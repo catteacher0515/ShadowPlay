@@ -22,6 +22,13 @@
       }
     },
     {
+      "path": "pages/theater/journey/wukong/level2",
+      "style": {
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
       "path": "pages/theater/journey/index",
       "style": {
         "navigationStyle": "custom",
