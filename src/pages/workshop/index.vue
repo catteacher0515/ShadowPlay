@@ -89,7 +89,7 @@
               <text class="step-num">2</text>
               <view class="step-text">
                 <text class="step-title">搜集部件</text>
-                <text class="step-desc">前往【指尖剧场】演出，赢取更多部件解锁权限。</text>
+                <text class="step-desc">前往【西游·征途】闯关，赢取更多部件解锁权限。</text>
               </view>
             </view>
             <view class="step-item">
@@ -149,49 +149,48 @@
       </scroll-view>
     </view>
     
-    <CustomTabBar current-path="/pages/workshop/index" />
+    <CustomTabBar current-path="/pages/theater/workshop/index" />
   </view>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-// ✨ 引入 onShow 生命周期，确保每次切回来都能刷新库存
 import { onShow } from '@dcloudio/uni-app'
 import CustomTabBar from '@/components/CustomTabBar.vue'
 
-// --- 1. Asset Database (不变) ---
+// --- 1. Asset Database ---
 const gameDatabase = [
-  // --- 1. Sun Wukong ---
+  // --- 1. Sun Wukong (默认解锁) ---
   { id: 'wk_head', name: '美猴王', category: 'head', role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-head.png.png', quality: 'epic' },
   { id: 'wk_body', name: '锁子黄金甲', category: 'body', role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-body.png', quality: 'epic' },
   { id: 'wk_hand', name: '如意金箍棒', category: 'hand', role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-hand.png.png', quality: 'epic' },
   { id: 'wk_leg',  name: '藕丝步云履', category: 'leg',  role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-leg.png.png', quality: 'epic' },
   
-  // --- 2. Tang Seng ---
+  // --- 2. Tang Seng (Level 3 Reward) ---
   { id: 'ts_head', name: '唐三藏', category: 'head', role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-head.png.png', quality: 'epic' },
   { id: 'ts_body', name: '锦斓袈裟', category: 'body', role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-body.png.png', quality: 'epic' },
   { id: 'ts_hand', name: '九环锡杖', category: 'hand', role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-hand.png.png', quality: 'epic' },
   { id: 'ts_leg',  name: '僧鞋',   category: 'leg',  role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-leg.png.png', quality: 'epic' },
 
-  // --- 3. Zhu Bajie ---
+  // --- 3. Zhu Bajie (Level 1 Reward) ---
   { id: 'bj_head', name: '天蓬元帅', category: 'head', role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-head.png.png', quality: 'epic' },
   { id: 'bj_body', name: '皂直裰',   category: 'body', role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-body.png.png', quality: 'epic' },
   { id: 'bj_hand', name: '九齿钉耙', category: 'hand', role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-hand.png.png', quality: 'epic' },
   { id: 'bj_leg',  name: '行脚鞋',   category: 'leg',  role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-leg.png.png', quality: 'epic' },
 
-  // --- 4. Sha Seng ---
+  // --- 4. Sha Seng (Level 2 Reward) ---
   { id: 'ss_head', name: '卷帘大将', category: 'head', role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-head.png.png', quality: 'epic' },
   { id: 'ss_body', name: '黄锦直裰', category: 'body', role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-body.png.png', quality: 'epic' },
   { id: 'ss_hand', name: '降妖宝杖', category: 'hand', role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-hand.png.png', quality: 'epic' },
   { id: 'ss_leg',  name: '麻鞋',     category: 'leg',  role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-leg.png.png', quality: 'epic' },
 
-  // --- 5. White Snake (白素贞) ---
+  // --- 5. White Snake (Locked by default) ---
   { id: 'ws_head', name: '珠翠白凤冠', category: 'head', role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-head.png.png', quality: 'epic' },
   { id: 'ws_body', name: '白绫云纹蟒', category: 'body', role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-body.png.png', quality: 'epic' },
   { id: 'ws_hand', name: '雄黄宝剑',   category: 'hand', role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-hand.png.png', quality: 'epic' },
   { id: 'ws_leg',  name: '步步生莲履', category: 'leg',  role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-leg.png.png', quality: 'epic' },
 
-  // --- 6. Xu Xian (许仙) ---
+  // --- 6. Xu Xian (Locked by default) ---
   { id: 'xx_head', name: '许仙文生巾', category: 'head', role: 'xuxian', src: '/static/images/workshop/icons/icon-xu-head.png.png', quality: 'epic' },
   { id: 'xx_body', name: '蓝绸书生褶', category: 'body', role: 'xuxian', src: '/static/images/workshop/icons/icon-xu-body.png.png', quality: 'epic' },
   { id: 'xx_hand', name: '西湖借伞',   category: 'hand', role: 'xuxian', src: '/static/images/workshop/icons/icon-xu-hand.png.png', quality: 'epic' },
@@ -224,20 +223,38 @@ onShow(() => {
 // ✨ 读取“随身影箱”逻辑
 const loadInventory = () => {
   try {
-    let inventory = uni.getStorageSync('USER_INVENTORY');
+    // 1. 读取基础库存
+    let inventory = uni.getStorageSync('USER_INVENTORY') || [];
     
-    // 如果是新用户（没有库存），发放“孙悟空”迎新礼包
-    if (!inventory || inventory.length === 0) {
-      // 孙悟空全套 ID
-      inventory = ['wk_head', 'wk_body', 'wk_hand', 'wk_leg'];
-      uni.setStorageSync('USER_INVENTORY', inventory);
-      
-      // 可以在这里加一个弹窗提示用户获得礼包，暂时省略
-      console.log('New User: Granted Wukong Set');
-    }
+    // 2. 读取关卡通关证书 (Source of Truth)
+    const clearedLevels = uni.getStorageSync('WUKONG_CLEARED_IDS') || [];
     
-    // 更新内存中的解锁列表
-    unlockedItems.value = new Set(inventory);
+    // 3. 自动兑换逻辑：根据通关证书，发放对应角色的 4 个部件
+    const rewardsMap = {
+      'bajie': ['bj_head', 'bj_body', 'bj_hand', 'bj_leg'],
+      'shaseng': ['ss_head', 'ss_body', 'ss_hand', 'ss_leg'],
+      'tangseng': ['ts_head', 'ts_body', 'ts_hand', 'ts_leg']
+    };
+    
+    // 孙悟空默认解锁
+    const defaultSet = ['wk_head', 'wk_body', 'wk_hand', 'wk_leg'];
+    let newItems = [...defaultSet];
+    
+    // 遍历已通关卡，合并奖励
+    clearedLevels.forEach(levelId => {
+      if (rewardsMap[levelId]) {
+        newItems = [...newItems, ...rewardsMap[levelId]];
+      }
+    });
+    
+    // 合并去重
+    const finalInventory = [...new Set([...inventory, ...newItems])];
+    
+    // 更新本地存储和内存状态
+    uni.setStorageSync('USER_INVENTORY', finalInventory);
+    unlockedItems.value = new Set(finalInventory);
+    
+    console.log('Inventory Updated:', finalInventory);
     
   } catch (e) {
     console.error('Failed to load inventory', e);
