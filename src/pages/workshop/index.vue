@@ -23,21 +23,23 @@
             <text class="hint-sub">进度: {{ equippedCount }}/4 (缺: {{ missingPartsText }})</text>
           </block>
           <block v-else>
-            <text class="hint-text active" v-if="!isExploded">✨ 恭喜 · {{ getRoleName(activeRole) }} 已唤醒 ✨</text>
-            <text class="hint-text active" v-else>🛠️ 结构拆解 · {{ getRoleName(activeRole) }} 🛠️</text>
-            <text class="hint-sub" v-if="!isExploded">(点击皮影查看部件详情)</text>
+            <text class="hint-text active" v-if="isAwakened && !isExploded">✨ 恭喜 · {{ getRoleName(activeRole) }} 已唤醒 ✨</text>
+            <text class="hint-text active" v-else-if="isAwakened && isExploded">🛠️ 结构拆解 · {{ getRoleName(activeRole) }} 🛠️</text>
+            <text class="hint-text active" v-else>⚠️ 能量汇聚中...</text>
+            
+            <text class="hint-sub" v-if="isAwakened && !isExploded">(点击皮影查看部件详情)</text>
           </block>
         </view>
 
         <view class="character-display">
           
           <view 
-            v-if="isFullSet" 
-            class="puppet-display" 
+            v-if="isAwakened" 
+            class="puppet-display animate-appear" 
             @click="toggleExplode"
           >
             <image 
-              class="char-full-body animate-fade-in" 
+              class="char-full-body" 
               :class="{ 'hidden': isExploded }"
               :src="getFullBodySrc(activeRole)" 
               mode="aspectFit" 
@@ -128,7 +130,7 @@
             :class="{ 
               'quality-epic': item.quality === 'epic',
               'selected-active': isEquipped(item),
-              'is-locked': checkLocked(item) /* ✨ 锁定状态样式 */
+              'is-locked': checkLocked(item)
             }"
             @click="handleItemClick(item)"
           >
@@ -150,6 +152,25 @@
     </view>
     
     <CustomTabBar current-path="/pages/theater/workshop/index" />
+
+    <view v-if="isFusing" class="fusion-overlay">
+      <view class="fusion-rays"></view>
+      
+      <view class="stream stream-tl"></view>
+      <view class="stream stream-tr"></view>
+      <view class="stream stream-bl"></view>
+      <view class="stream stream-br"></view>
+
+      <view class="fusion-core">
+        <view class="core-inner"></view>
+        <view class="core-outer"></view>
+      </view>
+      
+      <view class="fusion-shockwave"></view>
+
+      <text class="fusion-text">灵 · 韵 · 合 · 一</text>
+    </view>
+
   </view>
 </template>
 
@@ -158,39 +179,34 @@ import { ref, computed, onMounted } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import CustomTabBar from '@/components/CustomTabBar.vue'
 
-// --- 1. Asset Database ---
+// --- 1. Asset Database (保持不变) ---
 const gameDatabase = [
-  // --- 1. Sun Wukong (默认解锁) ---
+  // Wukong
   { id: 'wk_head', name: '美猴王', category: 'head', role: 'wukong', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-wukong-head.png.png', quality: 'epic' },
   { id: 'wk_body', name: '锁子黄金甲', category: 'body', role: 'wukong', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-wukong-body.png', quality: 'epic' },
   { id: 'wk_hand', name: '如意金箍棒', category: 'hand', role: 'wukong', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-wukong-hand.png.png', quality: 'epic' },
   { id: 'wk_leg',  name: '藕丝步云履', category: 'leg',  role: 'wukong', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-wukong-leg.png.png', quality: 'epic' },
-  
-  // --- 2. Tang Seng (Level 3 Reward) ---
+  // Tang Seng
   { id: 'ts_head', name: '唐三藏', category: 'head', role: 'tangseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-tangseng-head.png.png', quality: 'epic' },
   { id: 'ts_body', name: '锦斓袈裟', category: 'body', role: 'tangseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-tangseng-body.png.png', quality: 'epic' },
   { id: 'ts_hand', name: '九环锡杖', category: 'hand', role: 'tangseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-tangseng-hand.png.png', quality: 'epic' },
   { id: 'ts_leg',  name: '僧鞋',   category: 'leg',  role: 'tangseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-tangseng-leg.png.png', quality: 'epic' },
-
-  // --- 3. Zhu Bajie (Level 1 Reward) ---
+  // Zhu Bajie
   { id: 'bj_head', name: '天蓬元帅', category: 'head', role: 'bajie', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-bajie-head.png.png', quality: 'epic' },
   { id: 'bj_body', name: '皂直裰',   category: 'body', role: 'bajie', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-bajie-body.png.png', quality: 'epic' },
   { id: 'bj_hand', name: '九齿钉耙', category: 'hand', role: 'bajie', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-bajie-hand.png.png', quality: 'epic' },
   { id: 'bj_leg',  name: '行脚鞋',   category: 'leg',  role: 'bajie', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-bajie-leg.png.png', quality: 'epic' },
-
-  // --- 4. Sha Seng (Level 2 Reward) ---
+  // Sha Seng
   { id: 'ss_head', name: '卷帘大将', category: 'head', role: 'shaseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-shaseng-head.png.png', quality: 'epic' },
   { id: 'ss_body', name: '黄锦直裰', category: 'body', role: 'shaseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-shaseng-body.png.png', quality: 'epic' },
   { id: 'ss_hand', name: '降妖宝杖', category: 'hand', role: 'shaseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-shaseng-hand.png.png', quality: 'epic' },
   { id: 'ss_leg',  name: '麻鞋',     category: 'leg',  role: 'shaseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-shaseng-leg.png.png', quality: 'epic' },
-
-  // --- 5. White Snake (Locked by default) ---
+  // White Snake
   { id: 'ws_head', name: '珠翠白凤冠', category: 'head', role: 'whitesnake', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-white-head.png.png', quality: 'epic' },
   { id: 'ws_body', name: '白绫云纹蟒', category: 'body', role: 'whitesnake', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-white-body.png.png', quality: 'epic' },
   { id: 'ws_hand', name: '雄黄宝剑',   category: 'hand', role: 'whitesnake', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-white-hand.png.png', quality: 'epic' },
   { id: 'ws_leg',  name: '步步生莲履', category: 'leg',  role: 'whitesnake', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-white-leg.png.png', quality: 'epic' },
-
-  // --- 6. Xu Xian (Locked by default) ---
+  // Xu Xian
   { id: 'xx_head', name: '许仙文生巾', category: 'head', role: 'xuxian', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-xu-head.png.png', quality: 'epic' },
   { id: 'xx_body', name: '蓝绸书生褶', category: 'body', role: 'xuxian', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-xu-body.png.png', quality: 'epic' },
   { id: 'xx_hand', name: '西湖借伞',   category: 'hand', role: 'xuxian', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-xu-hand.png.png', quality: 'epic' },
@@ -211,46 +227,39 @@ const activeRole = ref(null);
 const equippedIds = ref(new Set());
 const equippedCategories = ref(new Set()); 
 const isExploded = ref(false);
-
-// ✨ 新增：已解锁的物品 ID 集合
 const unlockedItems = ref(new Set());
+
+// 🎬 特效与觉醒状态控制
+const isFusing = ref(false);   // 是否正在播放特效
+const isAwakened = ref(false); // 角色是否已觉醒 (特效播完后才变 true)
 
 // ✨ 核心改造：onShow 读取影箱数据
 onShow(() => {
   loadInventory();
 });
 
-// ✨ 读取“随身影箱”逻辑
 const loadInventory = () => {
   try {
-    // 1. 读取基础库存
     let inventory = uni.getStorageSync('USER_INVENTORY') || [];
-    
-    // 2. 读取关卡通关证书 (Source of Truth)
     const clearedLevels = uni.getStorageSync('WUKONG_CLEARED_IDS') || [];
     
-    // 3. 自动兑换逻辑：根据通关证书，发放对应角色的 4 个部件
     const rewardsMap = {
       'bajie': ['bj_head', 'bj_body', 'bj_hand', 'bj_leg'],
       'shaseng': ['ss_head', 'ss_body', 'ss_hand', 'ss_leg'],
       'tangseng': ['ts_head', 'ts_body', 'ts_hand', 'ts_leg']
     };
     
-    // 孙悟空默认解锁
     const defaultSet = ['wk_head', 'wk_body', 'wk_hand', 'wk_leg'];
     let newItems = [...defaultSet];
     
-    // 遍历已通关卡，合并奖励
     clearedLevels.forEach(levelId => {
       if (rewardsMap[levelId]) {
         newItems = [...newItems, ...rewardsMap[levelId]];
       }
     });
     
-    // 合并去重
     const finalInventory = [...new Set([...inventory, ...newItems])];
     
-    // 更新本地存储和内存状态
     uni.setStorageSync('USER_INVENTORY', finalInventory);
     unlockedItems.value = new Set(finalInventory);
     
@@ -319,13 +328,11 @@ const hasPart = (category) => {
   return equippedCategories.value.has(category);
 };
 
-// ✨ 判断是否锁定
 const checkLocked = (item) => {
   return !unlockedItems.value.has(item.id);
 };
 
 const handleItemClick = (item) => {
-  // ✨ 拦截逻辑：如果是锁定的，禁止操作
   if (checkLocked(item)) {
     uni.showToast({
       title: '请前往【指尖剧场】解锁该部件',
@@ -338,10 +345,12 @@ const handleItemClick = (item) => {
   // Head Selection
   if (item.category === 'head') {
     if (activeRole.value !== item.role) {
+      // 切换角色：重置所有状态
       activeRole.value = item.role;
       equippedIds.value.clear();
       equippedCategories.value.clear();
-      isExploded.value = false; 
+      isExploded.value = false;
+      isAwakened.value = false; // 重置觉醒状态
       
       equippedIds.value.add(item.id);
       equippedCategories.value.add('head');
@@ -368,14 +377,39 @@ const handleItemClick = (item) => {
       return;
     }
 
+    // 添加装备
     equippedIds.value.add(item.id);
     equippedCategories.value.add(item.category);
     
-    uni.showToast({ title: '装备成功', icon: 'success' });
-    
-    const nextIndex = currentTab.value + 1;
-    if (nextIndex < tabs.length && !isFullSet.value) {
-       setTimeout(() => { currentTab.value = nextIndex; }, 400);
+    // ✨ 核心逻辑：检查是否刚刚集齐
+    if (equippedCategories.value.size === 4) {
+      // 1. 先触发融合特效
+      isFusing.value = true;
+      // 2. 此时孙悟空依然隐藏 (isAwakened = false)
+      isAwakened.value = false; 
+      
+      // 3. 等待 2秒 (特效时长)
+      setTimeout(() => {
+        isFusing.value = false;
+        
+        // 4. 特效结束瞬间，真身显现！
+        isAwakened.value = true; 
+        
+        uni.showToast({ 
+          title: `恭喜 · ${getRoleName(activeRole.value)} 已唤醒`, 
+          icon: 'none',
+          duration: 2500
+        });
+      }, 2000);
+    } else {
+      // 还没集齐，正常提示
+      uni.showToast({ title: '装备成功', icon: 'success' });
+      isAwakened.value = false; // 确保没集齐时是虚影
+      
+      const nextIndex = currentTab.value + 1;
+      if (nextIndex < tabs.length) {
+         setTimeout(() => { currentTab.value = nextIndex; }, 400);
+      }
     }
   }
 };
@@ -475,6 +509,15 @@ $epic-border: #FFD700;
   position: relative;
 }
 
+/* ✨ 真身出现时的动画：从光芒中浮现 ✨ */
+.animate-appear {
+  animation: charAppear 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes charAppear {
+  from { opacity: 0; transform: scale(1.2); filter: brightness(2) blur(10px); }
+  to { opacity: 1; transform: scale(1); filter: brightness(1) blur(0); }
+}
+
 .char-full-body {
   height: 85%;
   width: 85%;
@@ -560,12 +603,6 @@ $epic-border: #FFD700;
   font-size: 12px; color: #666;
   
   &.active { background: $gold; color: #000; font-weight: bold; box-shadow: 0 0 8px rgba(255,215,0,0.5); }
-}
-
-.animate-fade-in { animation: fadeIn 1s ease-out; }
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); filter: blur(10px); }
-  to { opacity: 1; transform: scale(1); filter: blur(0); }
 }
 
 /* --- Modal --- */
@@ -660,13 +697,12 @@ $epic-border: #FFD700;
     z-index: 2; 
   }
 
-  /* ✨ 核心锁定样式 ✨ */
   &.is-locked {
-    pointer-events: auto; /* 允许点击以触发提示 */
+    pointer-events: auto; 
     
     .item-icon {
-      filter: grayscale(100%); /* 变灰 */
-      opacity: 0.4; /* 变暗 */
+      filter: grayscale(100%); 
+      opacity: 0.4; 
     }
     .item-name {
       color: #777;
@@ -698,7 +734,6 @@ $epic-border: #FFD700;
   z-index: 3;
 }
 
-/* ✨ 锁头图标样式 ✨ */
 .lock-overlay {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   display: flex; align-items: center; justify-content: center;
@@ -707,5 +742,125 @@ $epic-border: #FFD700;
 .lock-emoji {
   font-size: 24px;
   text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* --- ✨✨✨ EX级金魄聚魂特效 CSS ✨✨✨ --- */
+
+.fusion-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9); /* 更黑的背景 */
+  z-index: 999; 
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+/* 1. 旋转圣光 */
+.fusion-rays {
+  position: absolute; width: 200vw; height: 200vw;
+  background: conic-gradient(from 0deg, transparent 0%, rgba(255, 215, 0, 0.1) 10%, transparent 20%, rgba(255, 215, 0, 0.1) 30%, transparent 40%);
+  animation: raysRotate 4s infinite linear;
+  opacity: 0;
+  animation-delay: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+/* 2. 四方流光 */
+.stream {
+  position: absolute; width: 20rpx; height: 20rpx;
+  background: $gold;
+  border-radius: 50%;
+  box-shadow: 0 0 20rpx $gold;
+  opacity: 0;
+}
+.stream-tl { top: 10%; left: 10%; animation: flyIn 0.8s cubic-bezier(0.5, 0, 0.5, 1) forwards; }
+.stream-tr { top: 10%; right: 10%; animation: flyIn 0.8s cubic-bezier(0.5, 0, 0.5, 1) forwards; }
+.stream-bl { bottom: 30%; left: 10%; animation: flyIn 0.8s cubic-bezier(0.5, 0, 0.5, 1) forwards; }
+.stream-br { bottom: 30%; right: 10%; animation: flyIn 0.8s cubic-bezier(0.5, 0, 0.5, 1) forwards; }
+
+/* 3. 核心光球 */
+.fusion-core {
+  width: 200rpx; height: 200rpx;
+  position: relative;
+  z-index: 10;
+  animation: coreSequence 2s forwards; /* 关键序列动画 */
+}
+
+.core-inner {
+  position: absolute; inset: 20rpx;
+  background: radial-gradient(circle, #fff 0%, $gold 60%, transparent 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 60rpx rgba(255, 215, 0, 0.8);
+}
+
+.core-outer {
+  position: absolute; inset: 0;
+  border: 4rpx solid rgba(255, 215, 0, 0.6);
+  border-radius: 50%;
+  border-top-color: transparent; 
+  animation: outerRotate 1s infinite linear;
+}
+
+/* 4. 冲击波 */
+.fusion-shockwave {
+  position: absolute; top: 50%; left: 50%;
+  width: 100rpx; height: 100rpx;
+  border: 10rpx solid #fff;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  animation: shockwaveExpand 0.5s 1.5s ease-out forwards; /* 1.5秒时触发 */
+}
+
+.fusion-text {
+  margin-top: 80rpx;
+  color: $gold;
+  font-size: 36rpx;
+  letter-spacing: 16rpx;
+  font-weight: bold;
+  opacity: 0;
+  animation: textFadeIn 0.5s 0.8s forwards; 
+  z-index: 10;
+}
+
+/* --- 关键帧定义 --- */
+
+@keyframes overlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@keyframes flyIn {
+  0% { opacity: 0; transform: scale(0.5); }
+  20% { opacity: 1; transform: scale(1); }
+  100% { top: 50%; left: 50%; right: auto; bottom: auto; opacity: 0; transform: scale(0.2); }
+}
+
+@keyframes coreSequence {
+  0% { transform: scale(0); opacity: 0; }
+  10% { transform: scale(1); opacity: 1; } /* 出现 */
+  40% { transform: scale(1); } /* 接收流光 */
+  40.1% { animation-timing-function: ease-in-out; } /* 开始震动 */
+  75% { transform: scale(0.8) translate(2px, -2px); filter: brightness(2); } /* 蓄力高亮 */
+  77% { transform: scale(0.8) translate(-2px, 2px); }
+  79% { transform: scale(0.8) translate(2px, 2px); }
+  81% { transform: scale(0.8) translate(-2px, -2px); }
+  100% { transform: scale(4); opacity: 0; } /* 爆发消失 */
+}
+
+@keyframes shockwaveExpand {
+  0% { width: 10rpx; height: 10rpx; opacity: 1; border-width: 20rpx; }
+  100% { width: 1000rpx; height: 1000rpx; opacity: 0; border-width: 0; }
+}
+
+@keyframes raysRotate {
+  from { transform: rotate(0deg); opacity: 0; }
+  20% { opacity: 0.5; }
+  to { transform: rotate(360deg); opacity: 0; }
+}
+
+@keyframes outerRotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes textFadeIn {
+  from { opacity: 0; transform: translateY(20rpx); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
