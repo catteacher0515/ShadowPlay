@@ -2,7 +2,7 @@
   <view class="level-container" :class="{ 'shake-screen': isShaking }">
     <image 
       class="bg-scene" 
-      src="/static/images/theater/journey/wukong/bg-scene-liusha.png.png" 
+      src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/bg-scene-liusha.png.png" 
       mode="aspectFill" 
     />
     
@@ -19,7 +19,7 @@
         @click="onBubbleClick(bubble)"
       >
         <view class="bubble-wrapper">
-           <image class="bubble-bg" src="/static/images/theater/journey/wukong/ui-bubble.png.png" mode="aspectFit" />
+           <image class="bubble-bg" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/ui-bubble.png.png" mode="aspectFit" />
            <image class="bubble-content" :src="bubble.contentSrc" mode="aspectFit" />
         </view>
       </view>
@@ -81,19 +81,19 @@
         
         <view class="reward-grid">
           <view class="reward-item-css">
-            <image src="/static/images/theater/journey/wukong/icon-shaseng-weapon.png.png" mode="aspectFit" />
+            <image src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-shaseng-weapon.png.png" mode="aspectFit" />
             <text class="item-name">降妖宝杖</text>
           </view>
           <view class="reward-item-css">
-            <image src="/static/images/theater/journey/wukong/icon-shaseng-necklace.png.png" mode="aspectFit" />
+            <image src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-shaseng-necklace.png.png" mode="aspectFit" />
             <text class="item-name">骷髅项链</text>
           </view>
           <view class="reward-item-css">
-            <image src="/static/images/theater/journey/wukong/icon-shaseng-robe.png.png" mode="aspectFit" />
+            <image src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-shaseng-robe.png.png" mode="aspectFit" />
             <text class="item-name">罗汉僧袍</text>
           </view>
           <view class="reward-item-css">
-            <image src="/static/images/theater/journey/wukong/icon-shaseng-shoes.png.png" mode="aspectFit" />
+            <image src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-shaseng-shoes.png.png" mode="aspectFit" />
             <text class="item-name">罗汉草鞋</text>
           </view>
         </view>
@@ -116,22 +116,22 @@ const screenHeight = uni.getSystemInfoSync().windowHeight;
 // --- Assets Mapping ---
 const ASSETS = {
   // Sprites
-  WUKONG_POINT: '/static/images/theater/journey/wukong/sprite-wukong-point.png.png',
-  WUKONG_PROBE: '/static/images/theater/journey/wukong/sprite-wukong-probe.png.png',
-  WUKONG_PROUD: '/static/images/theater/journey/wukong/sprite-wukong-proud.png.png',
-  BAJIE_ARROGANT: '/static/images/theater/journey/wukong/sprite-bajie-arrogant.png.png',
-  SHASENG_FIERCE: '/static/images/theater/journey/wukong/sprite-shaseng-fierce.png.png',
-  SHASENG_BOW: '/static/images/theater/journey/wukong/sprite-shaseng-bow.png.png',
+  WUKONG_POINT: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-wukong-point.png.png',
+  WUKONG_PROBE: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-wukong-probe.png.png',
+  WUKONG_PROUD: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-wukong-proud.png.png',
+  BAJIE_ARROGANT: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-bajie-arrogant.png.png',
+  SHASENG_FIERCE: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-shaseng-fierce.png.png',
+  SHASENG_BOW: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-shaseng-bow.png.png',
   
   // Items (Sha Seng Parts)
-  WEAPON: '/static/images/theater/journey/wukong/icon-shaseng-weapon.png.png',
-  NECKLACE: '/static/images/theater/journey/wukong/icon-shaseng-necklace.png.png',
-  ROBE: '/static/images/theater/journey/wukong/icon-shaseng-robe.png.png',
-  SHOES: '/static/images/theater/journey/wukong/icon-shaseng-shoes.png.png',
+  WEAPON: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-shaseng-weapon.png.png',
+  NECKLACE: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-shaseng-necklace.png.png',
+  ROBE: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-shaseng-robe.png.png',
+  SHOES: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-shaseng-shoes.png.png',
   
   // Traps
-  TRAP_CRAB: '/static/images/theater/journey/wukong/icon-trap-crab.png.png',
-  TRAP_STONE: '/static/images/theater/journey/wukong/icon-trap-stone.png.png',
+  TRAP_CRAB: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-trap-crab.png.png',
+  TRAP_STONE: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-trap-stone.png.png',
 };
 
 // --- Game Logic: Items & Bubbles ---

@@ -2,7 +2,7 @@
   <view class="journey-map-container">
     <image 
       class="bg-fullscreen" 
-      src="/static/images/theater/journey/wukong/bg-journey-wukong-full.jpg.png" 
+      src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/bg-journey-wukong-full.jpg.png" 
       mode="aspectFill" 
     />
     
@@ -25,7 +25,7 @@
         :class="{ locked: levels[2].isLocked, cleared: levels[2].isCleared }" 
         @click="enterLevel(2)"
       >
-        <image class="node-icon" src="/static/images/theater/journey/wukong/node-kingdom.png.png" mode="aspectFit" />
+        <image class="node-icon" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/node-kingdom.png.png" mode="aspectFit" />
         <view class="node-label">女儿国</view>
         <view v-if="levels[2].isLocked" class="lock-overlay">🔒</view>
       </view>
@@ -35,7 +35,7 @@
         :class="{ locked: levels[1].isLocked, cleared: levels[1].isCleared }"
         @click="enterLevel(1)"
       >
-        <image class="node-icon" src="/static/images/theater/journey/wukong/node-liusha.png.png" mode="aspectFit" />
+        <image class="node-icon" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/node-liusha.png.png" mode="aspectFit" />
         <view class="node-label">流沙河</view>
         <view v-if="levels[1].isLocked" class="lock-overlay">🔒</view>
         
@@ -49,7 +49,7 @@
         :class="{ locked: levels[0].isLocked, cleared: levels[0].isCleared }"
         @click="enterLevel(0)"
       >
-        <image class="node-icon" src="/static/images/theater/journey/wukong/node-gaolao.png.png" mode="aspectFit" />
+        <image class="node-icon" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/node-gaolao.png.png" mode="aspectFit" />
         <view class="node-label">高老庄</view>
         <view v-if="levels[0].isLocked" class="lock-overlay">🔒</view>
         

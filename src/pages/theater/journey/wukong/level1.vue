@@ -2,7 +2,7 @@
   <view class="level-container">
     <image 
       class="bg-scene" 
-      src="/static/images/theater/journey/wukong/bg-scene-gaolao.jpg.jpg" 
+      src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/bg-scene-gaolao.jpg.jpg" 
       mode="aspectFill" 
     />
     
@@ -68,19 +68,19 @@
         
         <view class="items-grid">
           <view class="reward-item-css">
-            <image src="/static/images/theater/journey/wukong/icon-bajie-hand.png.png" mode="aspectFit" />
+            <image src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-bajie-hand.png.png" mode="aspectFit" />
             <text class="item-name">九齿钉耙</text>
           </view>
           <view class="reward-item-css">
-            <image src="/static/images/theater/journey/wukong/icon-bajie-body.png.png" mode="aspectFit" />
+            <image src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-bajie-body.png.png" mode="aspectFit" />
             <text class="item-name">天蓬战甲</text>
           </view>
           <view class="reward-item-css">
-            <image src="/static/images/theater/journey/wukong/icon-bajie-head.png.png" mode="aspectFit" />
+            <image src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-bajie-head.png.png" mode="aspectFit" />
             <text class="item-name">行者僧帽</text>
           </view>
           <view class="reward-item-css">
-            <image src="/static/images/theater/journey/wukong/icon-bajie-leg.png.png" mode="aspectFit" />
+            <image src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-bajie-leg.png.png" mode="aspectFit" />
             <text class="item-name">踏云布鞋</text>
           </view>
         </view>
@@ -103,12 +103,12 @@ const gameStage = ref('intro');
 
 // --- 资源映射 ---
 const ASSETS = {
-  WUKONG_PROBE: '/static/images/theater/journey/wukong/sprite-wukong-probe.png.png',
-  WUKONG_POINT: '/static/images/theater/journey/wukong/sprite-wukong-point.png.png',
-  WUKONG_PROUD: '/static/images/theater/journey/wukong/sprite-wukong-proud.png.png',
-  BAJIE_ARROGANT: '/static/images/theater/journey/wukong/sprite-bajie-arrogant.png.png',
-  BAJIE_SCARED: '/static/images/theater/journey/wukong/sprite-bajie-scared.png.png',
-  BAJIE_BEG: '/static/images/theater/journey/wukong/sprite-bajie-beg.png.png',
+  WUKONG_PROBE: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-wukong-probe.png.png',
+  WUKONG_POINT: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-wukong-point.png.png',
+  WUKONG_PROUD: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-wukong-proud.png.png',
+  BAJIE_ARROGANT: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-bajie-arrogant.png.png',
+  BAJIE_SCARED: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-bajie-scared.png.png',
+  BAJIE_BEG: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-bajie-beg.png.png',
 };
 
 // --- 剧情数据 ---

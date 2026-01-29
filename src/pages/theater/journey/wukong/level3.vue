@@ -3,7 +3,7 @@
     <!-- 1. Background -->
     <image 
       class="bg-scene" 
-      src="/static/images/theater/journey/wukong/bg-scene-kingdom.jpg.jpg" 
+      src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/bg-scene-kingdom.jpg.jpg" 
       mode="aspectFill" 
     />
     
@@ -14,14 +14,14 @@
         <image 
           v-if="!isSuccess"
           class="shadow-img" 
-          src="/static/images/theater/journey/wukong/sprite-tangseng-shadow.png.png" 
+          src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-tangseng-shadow.png.png" 
           mode="aspectFit" 
         />
         <!-- Success State: Real Body -->
         <image 
           v-else
           class="real-img animate-shine" 
-          src="/static/images/theater/journey/wukong/sprite-tangseng-pray.png.png" 
+          src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-tangseng-pray.png.png" 
           mode="aspectFit" 
         />
       </view>
@@ -39,7 +39,7 @@
         @touchmove="touchMove"
         @touchend="touchEnd"
       >
-         <image src="/static/images/theater/journey/wukong/sprite-tangseng-soul.png.png" mode="aspectFit" />
+         <image src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-tangseng-soul.png.png" mode="aspectFit" />
          <view class="drag-hint" v-if="!isDragging">拖拽归位</view>
       </view>
     </view>
@@ -112,23 +112,23 @@ const screenHeight = uni.getSystemInfoSync().windowHeight;
 // --- Assets Mapping (Strict) ---
 const ASSETS = {
   // Tang Seng
-  TS_SHADOW: '/static/images/theater/journey/wukong/sprite-tangseng-shadow.png.png',
-  TS_SOUL: '/static/images/theater/journey/wukong/sprite-tangseng-soul.png.png',
-  TS_PRAY: '/static/images/theater/journey/wukong/sprite-tangseng-pray.png.png',
+  TS_SHADOW: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-tangseng-shadow.png.png',
+  TS_SOUL: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-tangseng-soul.png.png',
+  TS_PRAY: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-tangseng-pray.png.png',
   
   // Wukong
-  WUKONG_PROBE: '/static/images/theater/journey/wukong/sprite-wukong-probe.png.png',
-  WUKONG_POINT: '/static/images/theater/journey/wukong/sprite-wukong-point.png.png',
-  WUKONG_PROUD: '/static/images/theater/journey/wukong/sprite-wukong-proud.png.png',
+  WUKONG_PROBE: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-wukong-probe.png.png',
+  WUKONG_POINT: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-wukong-point.png.png',
+  WUKONG_PROUD: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-wukong-proud.png.png',
   
   // Bajie
-  BAJIE_POINT: '/static/images/theater/journey/wukong/sprite-bajie-arrogant.png.png',
+  BAJIE_POINT: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/sprite-bajie-arrogant.png.png',
   
   // Rewards
-  REWARD_BODY: '/static/images/theater/journey/wukong/icon-tangseng-body.png.png',
-  REWARD_HAND: '/static/images/theater/journey/wukong/icon-tangseng-hand.png.png',
-  REWARD_HEAD: '/static/images/theater/journey/wukong/icon-tangseng-head.png.png',
-  REWARD_LEG: '/static/images/theater/journey/wukong/icon-tangseng-leg.png.png',
+  REWARD_BODY: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-tangseng-body.png.png',
+  REWARD_HAND: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-tangseng-hand.png.png',
+  REWARD_HEAD: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-tangseng-head.png.png',
+  REWARD_LEG: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/journey/wukong/icon-tangseng-leg.png.png',
 };
 
 const rewardItems = [

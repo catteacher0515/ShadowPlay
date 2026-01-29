@@ -56,56 +56,56 @@
      title: '选皮', 
      en: 'Selecting', 
      desc: '严选关中秦川驴皮，皮质厚实坚韧。背光透视，需如琥珀般通透无瑕，方为上品。', 
-     src: '/static/images/wiki/craft/bg-proc-01.jpg.png' 
+     src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/craft/bg-proc-01.jpg.png' 
    }, 
    { 
      id: 2, 
      title: '制皮', 
      en: 'Preparing', 
      desc: '月牙刀推刮去毛，净除油脂。这是力与柔的博弈，直至皮板薄如蝉翼，润如凝脂。', 
-     src: '/static/images/wiki/craft/bg-proc-02.jpg.png' 
+     src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/craft/bg-proc-02.jpg.png' 
    }, 
    { 
      id: 3, 
      title: '画稿', 
      en: 'Drawing', 
      desc: '墨笔勾勒，落笔生神。通天鼻、凤眼、额头平扁，三笔定乾坤，绘出皮影灵魂。', 
-     src: '/static/images/wiki/craft/bg-proc-03.jpg.png' 
+     src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/craft/bg-proc-03.jpg.png' 
    }, 
    { 
      id: 4, 
      title: '过稿', 
      en: 'Tracing', 
      desc: '钢针代替画笔，在皮面上扎出千万针孔。不留墨迹，只留针痕，为雕刻定下精密坐标。', 
-     src: '/static/images/wiki/craft/bg-proc-04.jpg.png' 
+     src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/craft/bg-proc-04.jpg.png' 
    }, 
    { 
      id: 5, 
      title: '镂刻', 
      en: 'Carving', 
      desc: '推皮走刀，刀停皮转。指尖毫厘之间，刻出万千气象。讲究圆转如意，严丝合缝。', 
-     src: '/static/images/wiki/craft/bg-proc-05.jpg.png' 
+     src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/craft/bg-proc-05.jpg.png' 
    }, 
    { 
      id: 6, 
      title: '敷彩', 
      en: 'Coloring', 
      desc: '双面点染，色透肌理。红绿重彩入皮三分，灯光映照下，如红宝石般熠熠生辉。', 
-     src: '/static/images/wiki/craft/bg-proc-06.jpg.png' 
+     src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/craft/bg-proc-06.jpg.png' 
    }, 
    { 
      id: 7, 
      title: '发汗', 
      en: 'Ironing', 
      desc: '高温熨烫，脱胎换骨。热压瞬间，皮内水分蒸腾，色泽由雾面瞬间转为晶莹剔透。', 
-     src: '/static/images/wiki/craft/bg-proc-07.jpg.png' 
+     src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/craft/bg-proc-07.jpg.png' 
    }, 
    { 
      id: 8, 
      title: '钉缀', 
      en: 'Assembling', 
      desc: '丝线穿结，骨肉相连。颈、肩、肘、腕、膝，巧设关节，赋予皮影灵动的生命。', 
-     src: '/static/images/wiki/craft/bg-proc-08.jpg.png' 
+     src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/craft/bg-proc-08.jpg.png' 
    } 
  ]; 
  

@@ -3,7 +3,7 @@
     <view class="stage-area">
       <image 
         class="stage-bg" 
-        src="/static/images/workshop/bg-lightbox-portrait.jpg.jpg" 
+        src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/bg-lightbox-portrait.jpg.jpg" 
         mode="aspectFill" 
       />
       
@@ -161,40 +161,40 @@ import CustomTabBar from '@/components/CustomTabBar.vue'
 // --- 1. Asset Database ---
 const gameDatabase = [
   // --- 1. Sun Wukong (默认解锁) ---
-  { id: 'wk_head', name: '美猴王', category: 'head', role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-head.png.png', quality: 'epic' },
-  { id: 'wk_body', name: '锁子黄金甲', category: 'body', role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-body.png', quality: 'epic' },
-  { id: 'wk_hand', name: '如意金箍棒', category: 'hand', role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-hand.png.png', quality: 'epic' },
-  { id: 'wk_leg',  name: '藕丝步云履', category: 'leg',  role: 'wukong', src: '/static/images/workshop/icons/icon-wukong-leg.png.png', quality: 'epic' },
+  { id: 'wk_head', name: '美猴王', category: 'head', role: 'wukong', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-wukong-head.png.png', quality: 'epic' },
+  { id: 'wk_body', name: '锁子黄金甲', category: 'body', role: 'wukong', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-wukong-body.png', quality: 'epic' },
+  { id: 'wk_hand', name: '如意金箍棒', category: 'hand', role: 'wukong', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-wukong-hand.png.png', quality: 'epic' },
+  { id: 'wk_leg',  name: '藕丝步云履', category: 'leg',  role: 'wukong', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-wukong-leg.png.png', quality: 'epic' },
   
   // --- 2. Tang Seng (Level 3 Reward) ---
-  { id: 'ts_head', name: '唐三藏', category: 'head', role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-head.png.png', quality: 'epic' },
-  { id: 'ts_body', name: '锦斓袈裟', category: 'body', role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-body.png.png', quality: 'epic' },
-  { id: 'ts_hand', name: '九环锡杖', category: 'hand', role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-hand.png.png', quality: 'epic' },
-  { id: 'ts_leg',  name: '僧鞋',   category: 'leg',  role: 'tangseng', src: '/static/images/workshop/icons/icon-tangseng-leg.png.png', quality: 'epic' },
+  { id: 'ts_head', name: '唐三藏', category: 'head', role: 'tangseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-tangseng-head.png.png', quality: 'epic' },
+  { id: 'ts_body', name: '锦斓袈裟', category: 'body', role: 'tangseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-tangseng-body.png.png', quality: 'epic' },
+  { id: 'ts_hand', name: '九环锡杖', category: 'hand', role: 'tangseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-tangseng-hand.png.png', quality: 'epic' },
+  { id: 'ts_leg',  name: '僧鞋',   category: 'leg',  role: 'tangseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-tangseng-leg.png.png', quality: 'epic' },
 
   // --- 3. Zhu Bajie (Level 1 Reward) ---
-  { id: 'bj_head', name: '天蓬元帅', category: 'head', role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-head.png.png', quality: 'epic' },
-  { id: 'bj_body', name: '皂直裰',   category: 'body', role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-body.png.png', quality: 'epic' },
-  { id: 'bj_hand', name: '九齿钉耙', category: 'hand', role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-hand.png.png', quality: 'epic' },
-  { id: 'bj_leg',  name: '行脚鞋',   category: 'leg',  role: 'bajie', src: '/static/images/workshop/icons/icon-bajie-leg.png.png', quality: 'epic' },
+  { id: 'bj_head', name: '天蓬元帅', category: 'head', role: 'bajie', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-bajie-head.png.png', quality: 'epic' },
+  { id: 'bj_body', name: '皂直裰',   category: 'body', role: 'bajie', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-bajie-body.png.png', quality: 'epic' },
+  { id: 'bj_hand', name: '九齿钉耙', category: 'hand', role: 'bajie', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-bajie-hand.png.png', quality: 'epic' },
+  { id: 'bj_leg',  name: '行脚鞋',   category: 'leg',  role: 'bajie', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-bajie-leg.png.png', quality: 'epic' },
 
   // --- 4. Sha Seng (Level 2 Reward) ---
-  { id: 'ss_head', name: '卷帘大将', category: 'head', role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-head.png.png', quality: 'epic' },
-  { id: 'ss_body', name: '黄锦直裰', category: 'body', role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-body.png.png', quality: 'epic' },
-  { id: 'ss_hand', name: '降妖宝杖', category: 'hand', role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-hand.png.png', quality: 'epic' },
-  { id: 'ss_leg',  name: '麻鞋',     category: 'leg',  role: 'shaseng', src: '/static/images/workshop/icons/icon-shaseng-leg.png.png', quality: 'epic' },
+  { id: 'ss_head', name: '卷帘大将', category: 'head', role: 'shaseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-shaseng-head.png.png', quality: 'epic' },
+  { id: 'ss_body', name: '黄锦直裰', category: 'body', role: 'shaseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-shaseng-body.png.png', quality: 'epic' },
+  { id: 'ss_hand', name: '降妖宝杖', category: 'hand', role: 'shaseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-shaseng-hand.png.png', quality: 'epic' },
+  { id: 'ss_leg',  name: '麻鞋',     category: 'leg',  role: 'shaseng', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-shaseng-leg.png.png', quality: 'epic' },
 
   // --- 5. White Snake (Locked by default) ---
-  { id: 'ws_head', name: '珠翠白凤冠', category: 'head', role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-head.png.png', quality: 'epic' },
-  { id: 'ws_body', name: '白绫云纹蟒', category: 'body', role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-body.png.png', quality: 'epic' },
-  { id: 'ws_hand', name: '雄黄宝剑',   category: 'hand', role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-hand.png.png', quality: 'epic' },
-  { id: 'ws_leg',  name: '步步生莲履', category: 'leg',  role: 'whitesnake', src: '/static/images/workshop/icons/icon-white-leg.png.png', quality: 'epic' },
+  { id: 'ws_head', name: '珠翠白凤冠', category: 'head', role: 'whitesnake', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-white-head.png.png', quality: 'epic' },
+  { id: 'ws_body', name: '白绫云纹蟒', category: 'body', role: 'whitesnake', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-white-body.png.png', quality: 'epic' },
+  { id: 'ws_hand', name: '雄黄宝剑',   category: 'hand', role: 'whitesnake', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-white-hand.png.png', quality: 'epic' },
+  { id: 'ws_leg',  name: '步步生莲履', category: 'leg',  role: 'whitesnake', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-white-leg.png.png', quality: 'epic' },
 
   // --- 6. Xu Xian (Locked by default) ---
-  { id: 'xx_head', name: '许仙文生巾', category: 'head', role: 'xuxian', src: '/static/images/workshop/icons/icon-xu-head.png.png', quality: 'epic' },
-  { id: 'xx_body', name: '蓝绸书生褶', category: 'body', role: 'xuxian', src: '/static/images/workshop/icons/icon-xu-body.png.png', quality: 'epic' },
-  { id: 'xx_hand', name: '西湖借伞',   category: 'hand', role: 'xuxian', src: '/static/images/workshop/icons/icon-xu-hand.png.png', quality: 'epic' },
-  { id: 'xx_leg',  name: '登云薄底靴', category: 'leg',  role: 'xuxian', src: '/static/images/workshop/icons/icon-xu-leg.png.png', quality: 'epic' },
+  { id: 'xx_head', name: '许仙文生巾', category: 'head', role: 'xuxian', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-xu-head.png.png', quality: 'epic' },
+  { id: 'xx_body', name: '蓝绸书生褶', category: 'body', role: 'xuxian', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-xu-body.png.png', quality: 'epic' },
+  { id: 'xx_hand', name: '西湖借伞',   category: 'hand', role: 'xuxian', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-xu-hand.png.png', quality: 'epic' },
+  { id: 'xx_leg',  name: '登云薄底靴', category: 'leg',  role: 'xuxian', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-xu-leg.png.png', quality: 'epic' },
 ];
 
 // --- 2. State & Logic ---
@@ -291,12 +291,12 @@ const getRoleName = (roleKey) => {
 
 const getFullBodySrc = (roleKey) => {
   const map = {
-    'wukong': '/static/images/workshop/icons/sunwukong.png.png',
-    'tangseng': '/static/images/workshop/icons/tangseng.png.png',
-    'bajie': '/static/images/workshop/icons/bajie.png.png',
-    'shaseng': '/static/images/workshop/icons/shaseng.png.png',
-    'whitesnake': '/static/images/workshop/icons/white.png.png',
-    'xuxian': '/static/images/workshop/icons/xu.png.png'
+    'wukong': 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/sunwukong.png.png',
+    'tangseng': 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/tangseng.png.png',
+    'bajie': 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/bajie.png.png',
+    'shaseng': 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/shaseng.png.png',
+    'whitesnake': 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/white.png.png',
+    'xuxian': 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/xu.png.png'
   };
   return map[roleKey] || '';
 };

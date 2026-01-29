@@ -2,7 +2,7 @@
   <view class="theater-container">
     <image 
       class="bg-main" 
-      src="/static/images/theater/bg-theater-main.jpg.png" 
+      src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/bg-theater-main.jpg.png" 
       mode="aspectFill" 
     />
     
@@ -67,21 +67,21 @@ const scripts = [
     title: '西游记', 
     status: '经典重现', 
     locked: false, 
-    cover: '/static/images/theater/card-cover-journey.jpg.png' 
+    cover: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/card-cover-journey.jpg.png' 
   },
   { 
     id: 2, 
     title: '白蛇传', 
     status: '进行中', 
     locked: false, 
-    cover: '/static/images/theater/card-cover-whitesnake.jpg.png' 
+    cover: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/card-cover-whitesnake.jpg.png' 
   },
   { 
     id: 3, 
     title: '敬请期待', 
     status: '未完待续', 
     locked: true, 
-    cover: '/static/images/theater/card-cover-locked.jpg.png' 
+    cover: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/theater/card-cover-locked.jpg.png' 
   },
 ];
 

@@ -49,13 +49,13 @@
  const safeAreaTop = ref(40); 
   
  const historyEvents = [ 
-   { id: 1, era: '汉·武帝', title: '光影初现', desc: '方士少翁以此招魂，武帝隔帐观影。光影迷离间，皮影雏形初具。', image: '/static/images/wiki/history/hist-han.png' }, 
-   { id: 2, era: '宋·仁宗', title: '瓦舍勾栏', desc: '绘革社兴，皮影走向市井。汴京繁华处，讲史演义，万人空巷。', image: '/static/images/wiki/history/hist-song.png' }, 
-   { id: 3, era: '明·万历', title: '滦州成影', desc: '落第秀才黄素志改良影人，雕镂驴皮，创立“乐亭影”独特唱腔。', image: '/static/images/wiki/history/hist-ming.png' }, 
-   { id: 4, era: '清·中晚期', title: '入京夺魁', desc: '冀东影班进京庆寿，王府贵胄争相延请，名动京师，谓之“王府影”。', image: '/static/images/wiki/history/hist-qing.png' }, 
-   { id: 5, era: '清末·民初', title: '百团争艳', desc: '影班“开荒”关外，雕刻工艺登峰造极，影人结构精妙，关节多达十余处。', image: '/static/images/wiki/history/hist-republic.png' }, 
-   { id: 6, era: '公元 2006', title: '非遗新生', desc: '唐山皮影入选首批国家级非遗名录，古老唱腔响彻世界舞台。', image: '/static/images/wiki/history/hist-modern.png' }, 
-   { id: 7, era: '未来 · 你我', title: '薪火相传', desc: '“功成不必在我，功成必定有我。”\n数字光影流转，此刻，你我皆是守艺人。', image: '/static/images/wiki/history/hist-future.png', isSpecial: true } 
+   { id: 1, era: '汉·武帝', title: '光影初现', desc: '方士少翁以此招魂，武帝隔帐观影。光影迷离间，皮影雏形初具。', image: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/history/hist-han.png' }, 
+   { id: 2, era: '宋·仁宗', title: '瓦舍勾栏', desc: '绘革社兴，皮影走向市井。汴京繁华处，讲史演义，万人空巷。', image: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/history/hist-song.png' }, 
+   { id: 3, era: '明·万历', title: '滦州成影', desc: '落第秀才黄素志改良影人，雕镂驴皮，创立“乐亭影”独特唱腔。', image: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/history/hist-ming.png' }, 
+   { id: 4, era: '清·中晚期', title: '入京夺魁', desc: '冀东影班进京庆寿，王府贵胄争相延请，名动京师，谓之“王府影”。', image: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/history/hist-qing.png' }, 
+   { id: 5, era: '清末·民初', title: '百团争艳', desc: '影班“开荒”关外，雕刻工艺登峰造极，影人结构精妙，关节多达十余处。', image: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/history/hist-republic.png' }, 
+   { id: 6, era: '公元 2006', title: '非遗新生', desc: '唐山皮影入选首批国家级非遗名录，古老唱腔响彻世界舞台。', image: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/history/hist-modern.png' }, 
+   { id: 7, era: '未来 · 你我', title: '薪火相传', desc: '“功成不必在我，功成必定有我。”\n数字光影流转，此刻，你我皆是守艺人。', image: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/history/hist-future.png', isSpecial: true } 
  ]; 
   
  const goBack = () => { 

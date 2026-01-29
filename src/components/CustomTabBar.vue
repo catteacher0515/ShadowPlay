@@ -3,7 +3,7 @@
     
     <image 
       class="bg-img" 
-      src="/static/images/tabbar/bg-tabbar-clouds.png.jpg" 
+      src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/tabbar/bg-tabbar-clouds.png.jpg" 
       mode="scaleToFill" 
     ></image>
 
@@ -41,11 +41,11 @@ const props = defineProps({
 
 // 数据配置：严格匹配你的文件名
 const tabList = [
-  { pagePath: '/pages/index/index', text: '大厅', iconOff: '/static/images/tabbar/tab-icon-hall-off.png.png', iconOn: '/static/images/tabbar/tab-icon-hall-on.png.png' },
-  { pagePath: '/pages/workshop/index', text: '工坊', iconOff: '/static/images/tabbar/tab-icon-workshop-off.png.png', iconOn: '/static/images/tabbar/tab-icon-workshop-on.png.png' },
-  { pagePath: '/pages/theater/index', text: '剧场', iconOff: '/static/images/tabbar/tab-icon-theater-off.png.png', iconOn: '/static/images/tabbar/tab-icon-theater-on.png.png' },
-  { pagePath: '/pages/wiki/menu', text: '影卷', iconOff: '/static/images/tabbar/tab-icon-wiki-off.png.png', iconOn: '/static/images/tabbar/tab-icon-wiki-on.png.png' },
-  { pagePath: '/pages/market/index', text: '集市', iconOff: '/static/images/tabbar/tab-icon-market-off.png.png', iconOn: '/static/images/tabbar/tab-icon-market-on.png.png' }
+  { pagePath: '/pages/index/index', text: '大厅', iconOff: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/tabbar/tab-icon-hall-off.png.png', iconOn: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/tabbar/tab-icon-hall-on.png.png' },
+  { pagePath: '/pages/workshop/index', text: '工坊', iconOff: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/tabbar/tab-icon-workshop-off.png.png', iconOn: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/tabbar/tab-icon-workshop-on.png.png' },
+  { pagePath: '/pages/theater/index', text: '剧场', iconOff: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/tabbar/tab-icon-theater-off.png.png', iconOn: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/tabbar/tab-icon-theater-on.png.png' },
+  { pagePath: '/pages/wiki/menu', text: '影卷', iconOff: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/tabbar/tab-icon-wiki-off.png.png', iconOn: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/tabbar/tab-icon-wiki-on.png.png' },
+  { pagePath: '/pages/market/index', text: '集市', iconOff: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/tabbar/tab-icon-market-off.png.png', iconOn: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/tabbar/tab-icon-market-on.png.png' }
 ];
 
 const switchTab = (path) => {

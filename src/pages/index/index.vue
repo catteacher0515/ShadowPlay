@@ -1,21 +1,21 @@
 <template>
   <view class="main-hall-container">
     
-    <image class="bg-stage" src="/static/images/index/bg-stage-screen.jpg" mode="aspectFill" />
+    <image class="bg-stage" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/index/bg-stage-screen.jpg" mode="aspectFill" />
     
     <view class="stage-background-layer">
        <image 
          class="full-screen-gif" 
-         src="/static/images/index/char-wukong-vs-baigujing.gif" 
+         src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/index/char-wukong-vs-baigujing.gif" 
          mode="aspectFill" 
        />
     </view>
     
-    <image class="fg-curtain" src="/static/images/index/curtain-frame.jpg.jpg" mode="aspectFill" />
+    <image class="fg-curtain" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/index/curtain-frame.jpg.jpg" mode="aspectFill" />
 
     <image 
       class="btn-daily-entry" 
-      src="/static/images/daily/btn-play-call.png.png" 
+      src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/daily/btn-play-call.png.png" 
       mode="widthFix" 
       @click="goToDaily" 
     />

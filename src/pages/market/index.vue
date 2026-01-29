@@ -11,7 +11,7 @@
       <view class="hero-banner" :style="{ marginTop: (safeAreaTop + navHeight) + 'px' }">
         <image 
            class="banner-img" 
-           src="/static/images/market/banner-market-bridge.jpg" 
+           src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/market/banner-market-bridge.jpg" 
            mode="widthFix" 
         />
         
@@ -38,7 +38,7 @@
             <image 
                 v-if="currentTab === index" 
                 class="tab-brush" 
-                src="/static/images/market/ui-tab-active.png" 
+                src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/market/ui-tab-active.png" 
                 mode="aspectFit" 
             />
         </view>
@@ -58,7 +58,7 @@
                     <text class="price"><text class="symbol">¥</text>{{ item.price }}</text>
                     <image 
                         class="btn-buy vintage-fusion" 
-                        src="/static/images/market/btn-buy-seal.png" 
+                        src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/market/btn-buy-seal.png" 
                         @click.stop="handleBuy(item)" 
                     />
                 </view>
@@ -90,40 +90,40 @@ const products = ref([
         price: '29.9', 
         tag: '特惠', 
         // 礼盒暂用 Banner 图
-        img: '/static/images/market/shadow-puppet-puzzle.png.png' 
+        img: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/market/shadow-puppet-puzzle.png.png' 
     },
     { 
         name: '杨戬·原色帆布袋', 
         price: '19.9', 
         tag: '实用', 
         // 依据截图：哈希文件名，后缀为 .png
-        img: '/static/images/market/1885aeb164b2741dedb7a7ea0d692578.png' 
+        img: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/market/1885aeb164b2741dedb7a7ea0d692578.png' 
     },
         { 
         name: '唐三藏·透光立牌', 
         price: '9.9', 
         tag: '精致', 
-        img: '/static/images/market/acrylic-stand-tang-sanzang-product.png.png' 
+        img: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/market/acrylic-stand-tang-sanzang-product.png.png' 
     },
         { 
         name: '猪八戒·透光立牌', 
         price: '9.9', 
         tag: '新品', 
-        img: '/static/images/market/acrylic-stand-zhu-bajie-product.png.png' 
+        img: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/market/acrylic-stand-zhu-bajie-product.png.png' 
     },
     { 
         name: '孙悟空·透光立牌', 
         price: '9.9', 
         tag: '热销', 
         // 依据截图：双后缀 .png.png
-        img: '/static/images/market/acrylic-stand-sun-wukong-product.png.png' 
+        img: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/market/acrylic-stand-sun-wukong-product.png.png' 
     },
 
     { 
         name: '沙悟净·透光立牌', 
         price: '9.9', 
         tag: '收藏', 
-        img: '/static/images/market/acrylic-stand-sha-wujing-product.png.png' 
+        img: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/market/acrylic-stand-sha-wujing-product.png.png' 
     },
 ]);
 

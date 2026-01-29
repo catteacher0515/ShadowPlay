@@ -1,16 +1,16 @@
 <template>
   <view class="vocal-container">
-    <image class="bg-img" src="/static/images/wiki/vocal/bg-vocal-stage.jpg.jpg" mode="aspectFill" />
+    <image class="bg-img" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/vocal/bg-vocal-stage.jpg.jpg" mode="aspectFill" />
 
     <view class="player-wrapper">
       
       <view class="turntable" :class="{ 'is-spinning': isPlaying }">
-        <image class="disc-base" src="/static/images/wiki/vocal/ui-disc-skin.png.png" mode="aspectFit" />
+        <image class="disc-base" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/vocal/ui-disc-skin.png.png" mode="aspectFit" />
         <image :key="currentTrack.id" class="disc-cover" :src="currentTrack.cover" mode="aspectFit" />
       </view>
 
       <view class="control-stick-wrapper" :class="{ 'stick-active': isPlaying }">
-          <image class="stick-img" src="/static/images/wiki/vocal/ui-control-stick.png.png" mode="heightFix" />
+          <image class="stick-img" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/vocal/ui-control-stick.png.png" mode="heightFix" />
       </view>
 
     </view>
@@ -34,7 +34,7 @@
       </view>
       
       <view class="play-btn-box" @click="togglePlay">
-        <image class="btn-img" src="/static/images/wiki/vocal/btn-play-call.png.png" mode="aspectFit" />
+        <image class="btn-img" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/vocal/btn-play-call.png.png" mode="aspectFit" />
         <view class="btn-shadow" v-if="isPlaying"></view>
       </view>
     </view>
@@ -61,21 +61,21 @@ const tracks = [
     id: 'monkey',
     name: '掐嗓 · 借扇',
     desc: '孙悟空大战铁扇公主 (武戏)',
-    cover: '/static/images/wiki/vocal/char-shadow-monkey.png.png', 
+    cover: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/vocal/char-shadow-monkey.png.png', 
     audio: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/audio/vocal-monkey.mp3' 
   },
   {
     id: 'snake',
     name: '断桥 · 情深',
     desc: '白娘子与许仙 (文戏)',
-    cover: '/static/images/wiki/vocal/char-shadow-snake.png.png', 
+    cover: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/vocal/char-shadow-snake.png.png', 
     audio: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/audio/vocal-snake.mp3' 
   },
   {
     id: 'zhuge',
     name: '空城 · 抚琴',
     desc: '诸葛亮智退司马懿 (生角)',
-    cover: '/static/images/wiki/vocal/char-shadow-zhuge.png.png', 
+    cover: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/vocal/char-shadow-zhuge.png.png', 
     audio: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/audio/vocal-zhuge.mp3' 
   }
 ];

@@ -3,14 +3,14 @@
     
     <image 
       class="bg-dark" 
-      src="/static/images/loading/bg-loading-dark-texture.jpg.jpg" 
+      src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/loading/bg-loading-dark-texture.jpg.jpg" 
       mode="aspectFill" 
     />
 
     <view class="journey-stage">
       <image 
         class="team-gif"
-        src="/static/images/loading/char-journey-team-walk.gif" 
+        src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/loading/char-journey-team-walk.gif" 
         mode="aspectFit"
       />
     </view>

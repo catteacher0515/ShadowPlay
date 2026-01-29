@@ -1,6 +1,6 @@
 <template>
   <view class="daily-page">
-    <image class="bg-layer" src="/static/images/daily/bg-detail-paper-texture.jpg.jpg" mode="aspectFill" />
+    <image class="bg-layer" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/daily/bg-detail-paper-texture.jpg.jpg" mode="aspectFill" />
 
     <view class="nav-bar" :style="{ paddingTop: safeAreaTop + 'px' }">
       <view class="back-btn" @click="goBack">
@@ -21,7 +21,7 @@
 
           <view class="art-frame-container">
             <view class="art-frame">
-               <image class="main-art" src="/static/images/daily/sample-shadow-hunting.jpg.jpg" mode="aspectFit" />
+               <image class="main-art" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/daily/sample-shadow-hunting.jpg.jpg" mode="aspectFit" />
             </view>
           </view>
           
@@ -34,7 +34,7 @@
               <text class="label">今日，</text>
               <text class="value">宜一团和气。</text>
             </view>
-            <image class="brand-stamp" src="/static/images/daily/stamp-watermark-brand.png.png" mode="heightFix" />
+            <image class="brand-stamp" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/daily/stamp-watermark-brand.png.png" mode="heightFix" />
           </view>
         </view>
 
@@ -43,7 +43,7 @@
 
     <view class="footer-area">
       <view class="save-btn" @click="onSave" hover-class="btn-hover">
-        <image class="icon" src="/static/images/daily/icon-btn-download-gold.png.png" />
+        <image class="icon" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/daily/icon-btn-download-gold.png.png" />
         <text>收入金库</text>
       </view>
     </view>

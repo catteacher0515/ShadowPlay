@@ -1,7 +1,7 @@
 <template> 
    <view class="wiki-container"> 
      
-     <image class="bg-fixed" src="/static/images/wiki/bg-wiki-dark.jpg.jpg" mode="aspectFill" /> 
+     <image class="bg-fixed" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/bg-wiki-dark.jpg.jpg" mode="aspectFill" /> 
  
      <scroll-view scroll-y class="scroll-content" :style="{ paddingTop: (safeAreaTop + 40) + 'px' }"> 
        
@@ -12,20 +12,20 @@
  
        <view class="card-list"> 
          <view class="wiki-card" @click="goDetail('history')"> 
-             <image class="card-bg" src="/static/images/wiki/card-history.png.png" mode="aspectFill" /> 
-             <image class="card-text text-left" src="/static/images/wiki/text-history.png.png" mode="heightFix" /> 
+             <image class="card-bg" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/card-history.png.png" mode="aspectFill" /> 
+             <image class="card-text text-left" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/text-history.png.png" mode="heightFix" /> 
              <view class="card-overlay"></view> 
          </view> 
  
          <view class="wiki-card" @click="goDetail('craft')"> 
-             <image class="card-bg" src="/static/images/wiki/card-craft.png.png" mode="aspectFill" /> 
-             <image class="card-text text-right" src="/static/images/wiki/text-craft.png.png" mode="heightFix" /> 
+             <image class="card-bg" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/card-craft.png.png" mode="aspectFill" /> 
+             <image class="card-text text-right" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/text-craft.png.png" mode="heightFix" /> 
              <view class="card-overlay"></view> 
          </view> 
  
          <view class="wiki-card" @click="goDetail('vocal')"> 
-             <image class="card-bg" src="/static/images/wiki/card-vocal.png.png" mode="aspectFill" /> 
-             <image class="card-text text-left" src="/static/images/wiki/text-vocal.png.png" mode="heightFix" /> 
+             <image class="card-bg" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/card-vocal.png.png" mode="aspectFill" /> 
+             <image class="card-text text-left" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/text-vocal.png.png" mode="heightFix" /> 
              <view class="card-overlay"></view> 
          </view> 
        </view> 
@@ -33,7 +33,7 @@
        <view class="footer-spacer"></view> 
      </scroll-view> 
  
-     <image class="vfx-bamboo" src="/static/images/wiki/vfx-bamboo.png.png" mode="aspectFill" /> 
+     <image class="vfx-bamboo" src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/wiki/vfx-bamboo.png.png" mode="aspectFill" /> 
  
      <CustomTabBar current-path="/pages/wiki/menu" /> 
    </view> 
