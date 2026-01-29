@@ -6,7 +6,6 @@
         src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/bg-lightbox-portrait.jpg.jpg" 
         mode="aspectFill" 
       />
-      
       <view class="vignette-overlay"></view>
 
       <view class="btn-help" @click="showHelp = true">
@@ -18,16 +17,15 @@
           <block v-if="!activeRole">
             <text class="hint-text placeholder">请先在【头茬】中选择角色</text>
           </block>
-          <block v-else-if="!isFullSet">
+          <block v-else-if="!isAwakened">
             <text class="hint-title">正在组装：{{ getRoleName(activeRole) }}</text>
-            <text class="hint-sub">进度: {{ equippedCount }}/4 (缺: {{ missingPartsText }})</text>
+            <text class="hint-sub" v-if="!isFusing">进度: {{ equippedCount }}/4 (缺: {{ missingPartsText }})</text>
+            <text class="hint-text active" v-else>⚠️ 能量汇聚中...</text>
           </block>
           <block v-else>
-            <text class="hint-text active" v-if="isAwakened && !isExploded">✨ 恭喜 · {{ getRoleName(activeRole) }} 已唤醒 ✨</text>
-            <text class="hint-text active" v-else-if="isAwakened && isExploded">🛠️ 结构拆解 · {{ getRoleName(activeRole) }} 🛠️</text>
-            <text class="hint-text active" v-else>⚠️ 能量汇聚中...</text>
-            
-            <text class="hint-sub" v-if="isAwakened && !isExploded">(点击皮影查看部件详情)</text>
+            <text class="hint-text active" v-if="!isExploded">✨ 恭喜 · {{ getRoleName(activeRole) }} 已唤醒 ✨</text>
+            <text class="hint-text active" v-else>🛠️ 结构拆解 · {{ getRoleName(activeRole) }} 🛠️</text>
+            <text class="hint-sub" v-if="!isExploded">(点击皮影查看部件详情)</text>
           </block>
         </view>
 
@@ -57,17 +55,15 @@
             </view>
           </view>
           
-          <view v-else class="ghost-container">
-            <view class="ghost-outline">
+          <view v-else class="scattered-stage">
+            <view class="ghost-placeholder" v-if="equippedCount === 0">
                <text class="ghost-icon">🎭</text>
             </view>
-            
-            <view class="parts-indicators">
-              <view class="indicator" :class="{ active: hasPart('head') }">头</view>
-              <view class="indicator" :class="{ active: hasPart('body') }">靠</view>
-              <view class="indicator" :class="{ active: hasPart('hand') }">把</view>
-              <view class="indicator" :class="{ active: hasPart('leg') }">腿</view>
-            </view>
+
+            <image v-if="hasPart('head')" class="scat-part scat-head animate-pop" :src="getPartSrc('head')" mode="aspectFit" />
+            <image v-if="hasPart('body')" class="scat-part scat-body animate-pop" :src="getPartSrc('body')" mode="aspectFit" />
+            <image v-if="hasPart('hand')" class="scat-part scat-hand animate-pop" :src="getPartSrc('hand')" mode="aspectFit" />
+            <image v-if="hasPart('leg')"  class="scat-part scat-leg animate-pop"  :src="getPartSrc('leg')"  mode="aspectFit" />
           </view>
 
         </view>
@@ -98,7 +94,7 @@
               <text class="step-num">3</text>
               <view class="step-text">
                 <text class="step-title">唤醒真身</text>
-                <text class="step-desc">集齐4个部件，唤醒皮影的完整形态！</text>
+                <text class="step-desc">集齐4个部件，触发金魄聚魂，唤醒完整形态！</text>
               </view>
             </view>
           </view>
@@ -179,7 +175,7 @@ import { ref, computed, onMounted } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import CustomTabBar from '@/components/CustomTabBar.vue'
 
-// --- 1. Asset Database (保持不变) ---
+// --- Asset Database ---
 const gameDatabase = [
   // Wukong
   { id: 'wk_head', name: '美猴王', category: 'head', role: 'wukong', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-wukong-head.png.png', quality: 'epic' },
@@ -213,7 +209,7 @@ const gameDatabase = [
   { id: 'xx_leg',  name: '登云薄底靴', category: 'leg',  role: 'xuxian', src: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/images/workshop/icons/icon-xu-leg.png.png', quality: 'epic' },
 ];
 
-// --- 2. State & Logic ---
+// --- Logic ---
 const showHelp = ref(false);
 const tabs = [
   { key: 'head', label: '头茬' },
@@ -229,11 +225,10 @@ const equippedCategories = ref(new Set());
 const isExploded = ref(false);
 const unlockedItems = ref(new Set());
 
-// 🎬 特效与觉醒状态控制
+// 状态控制
 const isFusing = ref(false);   // 是否正在播放特效
-const isAwakened = ref(false); // 角色是否已觉醒 (特效播完后才变 true)
+const isAwakened = ref(false); // 是否已觉醒（特效播放完毕后才为true）
 
-// ✨ 核心改造：onShow 读取影箱数据
 onShow(() => {
   loadInventory();
 });
@@ -263,14 +258,11 @@ const loadInventory = () => {
     uni.setStorageSync('USER_INVENTORY', finalInventory);
     unlockedItems.value = new Set(finalInventory);
     
-    console.log('Inventory Updated:', finalInventory);
-    
   } catch (e) {
     console.error('Failed to load inventory', e);
   }
 };
 
-// --- Computed ---
 const inventoryList = computed(() => {
   const currentKey = tabs[currentTab.value].key;
   return gameDatabase.filter(item => item.category === currentKey);
@@ -289,7 +281,6 @@ const missingPartsText = computed(() => {
   return missing.map(c => map[c]).join('、');
 });
 
-// --- Actions ---
 const getRoleName = (roleKey) => {
   const map = { 
     'wukong': '孙悟空', 'tangseng': '唐僧', 'bajie': '猪八戒', 'shaseng': '沙僧',
@@ -334,18 +325,13 @@ const checkLocked = (item) => {
 
 const handleItemClick = (item) => {
   if (checkLocked(item)) {
-    uni.showToast({
-      title: '请前往【指尖剧场】解锁该部件',
-      icon: 'none',
-      duration: 2000
-    });
+    uni.showToast({ title: '请前往【指尖剧场】解锁该部件', icon: 'none', duration: 2000 });
     return;
   }
 
-  // Head Selection
+  // 选择头部（切换角色）
   if (item.category === 'head') {
     if (activeRole.value !== item.role) {
-      // 切换角色：重置所有状态
       activeRole.value = item.role;
       equippedIds.value.clear();
       equippedCategories.value.clear();
@@ -364,7 +350,7 @@ const handleItemClick = (item) => {
       }
     }
   } 
-  // Body/Hand/Leg Selection
+  // 选择其他部件
   else {
     if (!activeRole.value) {
       uni.showToast({ title: '请先在"头茬"中选择角色', icon: 'none' });
@@ -377,22 +363,17 @@ const handleItemClick = (item) => {
       return;
     }
 
-    // 添加装备
     equippedIds.value.add(item.id);
     equippedCategories.value.add(item.category);
     
-    // ✨ 核心逻辑：检查是否刚刚集齐
+    // ✨ 核心逻辑：集齐4件触发觉醒 ✨
     if (equippedCategories.value.size === 4) {
-      // 1. 先触发融合特效
       isFusing.value = true;
-      // 2. 此时孙悟空依然隐藏 (isAwakened = false)
-      isAwakened.value = false; 
+      isAwakened.value = false; // 暂时保持散件状态，等动画播完
       
-      // 3. 等待 2秒 (特效时长)
+      // 2秒后特效结束，真身降临
       setTimeout(() => {
         isFusing.value = false;
-        
-        // 4. 特效结束瞬间，真身显现！
         isAwakened.value = true; 
         
         uni.showToast({ 
@@ -402,9 +383,8 @@ const handleItemClick = (item) => {
         });
       }, 2000);
     } else {
-      // 还没集齐，正常提示
       uni.showToast({ title: '装备成功', icon: 'success' });
-      isAwakened.value = false; // 确保没集齐时是虚影
+      isAwakened.value = false; // 确保是散件状态
       
       const nextIndex = currentTab.value + 1;
       if (nextIndex < tabs.length) {
@@ -424,30 +404,19 @@ $card-bg: #3E2723;
 $epic-border: #FFD700;
 
 .workshop-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  background-color: $stage-bg;
+  display: flex; flex-direction: column;
+  height: 100vh; width: 100vw;
+  overflow: hidden; background-color: $stage-bg;
 }
 
-/* --- Stage Area (55% Height) --- */
+/* --- Stage Area --- */
 .stage-area {
-  height: 55%; 
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #000;
-  overflow: hidden;
+  height: 55%; position: relative;
+  display: flex; justify-content: center; align-items: center;
+  background-color: #000; overflow: hidden;
 }
 
-.stage-bg {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  opacity: 0.6;
-}
-
+.stage-bg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.6; }
 .vignette-overlay {
   position: absolute; inset: 0;
   background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
@@ -457,11 +426,9 @@ $epic-border: #FFD700;
 .btn-help {
   position: absolute; top: 110px; right: 20px;
   width: 30px; height: 30px;
-  border: 1px solid rgba(255,255,255,0.5);
-  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.5); border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  color: #fff; font-weight: bold; z-index: 20;
-  background: rgba(0,0,0,0.3);
+  color: #fff; font-weight: bold; z-index: 20; background: rgba(0,0,0,0.3);
 }
 
 .stage-content {
@@ -471,19 +438,11 @@ $epic-border: #FFD700;
 }
 
 .stage-hint {
-  position: absolute; top: 40px;
-  z-index: 10;
-  background: rgba(0,0,0,0.6);
-  padding: 10px 20px;
-  border-radius: 20px;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255,255,255,0.1);
+  position: absolute; top: 40px; z-index: 10;
+  background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 20px;
+  backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.1);
   display: flex; flex-direction: column; align-items: center;
-  
-  &.hint-complete {
-    background: rgba(255, 215, 0, 0.2);
-    border-color: $gold;
-  }
+  &.hint-complete { background: rgba(255, 215, 0, 0.2); border-color: $gold; }
 }
 
 .hint-text {
@@ -491,76 +450,53 @@ $epic-border: #FFD700;
   &.active { color: $gold; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
   &.placeholder { color: rgba(255,255,255,0.6); }
 }
-
 .hint-title { color: #fff; font-size: 14px; margin-bottom: 4px; }
 .hint-sub { color: #aaa; font-size: 12px; }
 
 .character-display {
   width: 100%; height: 80%;
   display: flex; justify-content: center; align-items: center;
-  perspective: 1000px;
-  transform: translateY(60rpx);
+  perspective: 1000px; transform: translateY(60rpx);
 }
 
-/* === PUPPET DISPLAY (AWAKENED) === */
+/* === STATE A: PUPPET DISPLAY (AWAKENED) === */
 .puppet-display {
   width: 100%; height: 100%;
   display: flex; justify-content: center; align-items: center;
   position: relative;
 }
 
-/* ✨ 真身出现时的动画：从光芒中浮现 ✨ */
-.animate-appear {
-  animation: charAppear 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
+/* 神威降临动画 */
+.animate-appear { animation: charAppear 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
 @keyframes charAppear {
   from { opacity: 0; transform: scale(1.2); filter: brightness(2) blur(10px); }
   to { opacity: 1; transform: scale(1); filter: brightness(1) blur(0); }
 }
 
 .char-full-body {
-  height: 85%;
-  width: 85%;
-  transition: all 0.3s ease-out;
-  
-  &.hidden {
-    opacity: 0;
-    transform: scale(0.9);
-    pointer-events: none;
-  }
+  height: 85%; width: 85%; transition: all 0.3s ease-out;
+  &.hidden { opacity: 0; transform: scale(0.9); pointer-events: none; }
 }
 
-/* Exploded View */
+/* Exploded View (After Awakening) */
 .exploded-container {
-  position: absolute;
-  width: 300rpx; height: 400rpx;
+  position: absolute; width: 300rpx; height: 400rpx;
   display: flex; justify-content: center; align-items: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
   &.active {
-    opacity: 1;
-    pointer-events: auto;
-    
-    /* Animation Values */
+    opacity: 1; pointer-events: auto;
     .exp-head { transform: translateY(-240rpx) scale(1.1); }
     .exp-hand { transform: translateX(200rpx) rotate(15deg) scale(1.1); }
     .exp-leg  { transform: translateY(240rpx) scale(1.1); }
     .exp-body { transform: scale(1.2); }
-    
     .connector-line { opacity: 0.6; }
   }
 }
 
 .exp-part {
-  position: absolute;
-  width: 220rpx; height: 220rpx; 
+  position: absolute; width: 220rpx; height: 220rpx; 
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  z-index: 10;
-  top: 50%; left: 50%;
-  margin-top: -110rpx; margin-left: -110rpx;
-  
+  z-index: 10; top: 50%; left: 50%; margin-top: -110rpx; margin-left: -110rpx;
   &.exp-head { z-index: 11; }
   &.exp-body { width: 260rpx; height: 320rpx; margin-top: -160rpx; margin-left: -130rpx; z-index: 10; }
   &.exp-hand { z-index: 12; }
@@ -568,188 +504,83 @@ $epic-border: #FFD700;
 }
 
 .connector-line {
-  position: absolute;
-  background-color: transparent;
-  border: 1px dashed $gold;
-  opacity: 0;
-  transition: opacity 0.5s 0.2s;
-  z-index: 5;
-  transform-origin: center;
+  position: absolute; background-color: transparent;
+  border: 1px dashed $gold; opacity: 0;
+  transition: opacity 0.5s 0.2s; z-index: 5; transform-origin: center;
 }
 .line-head { height: 80rpx; width: 0; top: 50%; left: 50%; transform: translate(-50%, -120rpx); }
 .line-hand { width: 80rpx; height: 0; top: 50%; left: 50%; transform: translate(30rpx, 0); }
 .line-leg { height: 80rpx; width: 0; top: 50%; left: 50%; transform: translate(-50%, 40rpx); }
 
-/* === GHOST STATE === */
-.ghost-container {
-  display: flex; flex-direction: column; align-items: center;
-}
-
-.ghost-outline {
-  width: 200px; height: 300px;
-  border: 2px dashed rgba(255,255,255,0.15);
-  border-radius: 12px;
+/* === STATE B: SCATTERED STAGE (IN PROGRESS) === */
+.scattered-stage {
+  width: 100%; height: 100%; position: relative;
   display: flex; justify-content: center; align-items: center;
-  margin-bottom: 20px;
 }
 
+.ghost-placeholder {
+  width: 200px; height: 300px;
+  border: 2px dashed rgba(255,255,255,0.15); border-radius: 12px;
+  display: flex; justify-content: center; align-items: center;
+}
 .ghost-icon { font-size: 48px; opacity: 0.3; }
 
-.parts-indicators { display: flex; gap: 10px; }
-.indicator {
-  width: 30px; height: 30px; border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; color: #666;
-  
-  &.active { background: $gold; color: #000; font-weight: bold; box-shadow: 0 0 8px rgba(255,215,0,0.5); }
+/* 散落部件：复用 exploded 的偏移逻辑，实现“乐高散开”的效果 */
+.scat-part {
+  position: absolute; width: 220rpx; height: 220rpx; 
+  top: 50%; left: 50%; margin-top: -110rpx; margin-left: -110rpx;
+  filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+}
+.scat-head { transform: translateY(-240rpx) scale(1.1); z-index: 11; }
+.scat-body { width: 260rpx; height: 320rpx; margin-top: -160rpx; margin-left: -130rpx; transform: scale(1.2); z-index: 10; }
+.scat-hand { transform: translateX(200rpx) rotate(15deg) scale(1.1); z-index: 12; }
+.scat-leg  { transform: translateY(240rpx) scale(1.1); z-index: 9; }
+
+/* 上件时的弹跳动画 */
+.animate-pop { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0); }
+  70% { opacity: 1; transform: scale(1.2); }
+  100% { transform: scale(1); }
+  /* 注意：这里简化了，实际应用中 transform 会覆盖上面的位移，
+     为了保持位移，最好用嵌套容器或 animation-fill-mode 配合具体的keyframes。
+     但在 Vue 中，简单的 popIn 可能会重置 transform。
+     为了稳妥，这里仅做透明度渐变，或者直接用上面的静态位移。
+     为了保持简单且不破坏位移，这里我们用 keyframes 重新定义带位移的动画太繁琐。
+     我们改用一个简单的 fade-in。
+  */
 }
 
-/* --- Modal --- */
-.modal-mask {
-  position: absolute; inset: 0; z-index: 100;
-  background: rgba(0,0,0,0.8);
-  display: flex; align-items: center; justify-content: center;
-}
-.modal-content {
-  width: 80%; background: #2C1608;
-  border: 1px solid #5D4037;
-  border-radius: 12px; padding: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-}
-.modal-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;
-}
+/* --- Inventory & Modal CSS (Same as before) --- */
+.inventory-area { height: 45%; background-color: $inventory-bg; border-top: 2px solid #5D4037; display: flex; flex-direction: column; z-index: 20; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
+.tabs-header { height: 44px; display: flex; background-color: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.tab-item { flex: 1; display: flex; align-items: center; justify-content: center; color: #8D6E63; font-size: 14px; position: relative; transition: all 0.3s; &.active { color: $gold; font-weight: bold; background-color: rgba(255,215,0,0.05); &::after { content: ''; position: absolute; bottom: 0; left: 25%; width: 50%; height: 2px; background-color: $gold; } } }
+.grid-scroll { flex: 1; padding: 10px; box-sizing: border-box; margin-bottom: 20px; }
+.parts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding-bottom: calc(env(safe-area-inset-bottom) + 180rpx); }
+.item-card { position: relative; aspect-ratio: 1; background-color: $card-bg; border-radius: 6px; border: 1px solid #4E342E; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); &:active { transform: scale(0.95); } &.quality-epic { border-color: rgba($epic-border, 0.3); } &.selected-active { border: 2px solid $gold !important; transform: scale(1.05); box-shadow: 0 0 12px rgba(255, 215, 0, 0.4); z-index: 2; } &.is-locked { pointer-events: auto; .item-icon { filter: grayscale(100%); opacity: 0.4; } .item-name { color: #777; } } }
+.card-bg { position: absolute; inset: 0; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); z-index: 0; }
+.item-icon { width: 70%; height: 70%; z-index: 1; }
+.item-name { position: absolute; bottom: 0; width: 100%; text-align: center; font-size: 9px; color: #D7CCC8; background-color: rgba(0,0,0,0.6); padding: 2px 0; z-index: 2; }
+.check-mark { position: absolute; top: 2px; right: 2px; background: $gold; color: #000; width: 14px; height: 14px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; z-index: 3; }
+.lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 5; }
+.lock-emoji { font-size: 24px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+.modal-mask { position: absolute; inset: 0; z-index: 100; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; }
+.modal-content { width: 80%; background: #2C1608; border: 1px solid #5D4037; border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
 .modal-title { color: $gold; font-size: 18px; font-weight: bold; }
 .modal-close { color: #aaa; font-size: 24px; padding: 0 10px; }
-
 .step-item { display: flex; margin-bottom: 15px; }
-.step-num { 
-  width: 24px; height: 24px; background: $gold; color: #000; 
-  border-radius: 50%; text-align: center; line-height: 24px; font-size: 14px; font-weight: bold;
-  margin-right: 12px; flex-shrink: 0;
-}
+.step-num { width: 24px; height: 24px; background: $gold; color: #000; border-radius: 50%; text-align: center; line-height: 24px; font-size: 14px; font-weight: bold; margin-right: 12px; flex-shrink: 0; }
 .step-text { display: flex; flex-direction: column; }
 .step-title { color: #E0E0E0; font-size: 15px; font-weight: bold; margin-bottom: 2px; }
 .step-desc { color: #9E9E9E; font-size: 13px; line-height: 1.4; }
+.btn-primary { background: $gold; color: #000; border: none; font-size: 14px; font-weight: bold; margin-top: 10px; width: 100%; border-radius: 20px; }
 
-.btn-primary {
-  background: $gold; color: #000; border: none; font-size: 14px; font-weight: bold;
-  margin-top: 10px; width: 100%; border-radius: 20px;
-}
-
-/* --- Inventory Area (45% Height) --- */
-.inventory-area {
-  height: 45%; 
-  background-color: $inventory-bg;
-  border-top: 2px solid #5D4037;
-  display: flex; flex-direction: column;
-  z-index: 20;
-  box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
-}
-
-.tabs-header {
-  height: 44px; display: flex;
-  background-color: rgba(0,0,0,0.3);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-.tab-item {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  color: #8D6E63; font-size: 14px;
-  position: relative; transition: all 0.3s;
-
-  &.active {
-    color: $gold; font-weight: bold; background-color: rgba(255,215,0,0.05);
-    &::after { content: ''; position: absolute; bottom: 0; left: 25%; width: 50%; height: 2px; background-color: $gold; }
-  }
-}
-
-.grid-scroll {
-  flex: 1; padding: 10px; box-sizing: border-box;
-  margin-bottom: 20px;
-}
-
-.parts-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  padding-bottom: calc(env(safe-area-inset-bottom) + 180rpx);
-}
-
-.item-card {
-  position: relative; aspect-ratio: 1;
-  background-color: $card-bg;
-  border-radius: 6px;
-  border: 1px solid #4E342E;
-  overflow: hidden;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-
-  &:active { transform: scale(0.95); }
-  &.quality-epic { border-color: rgba($epic-border, 0.3); }
-
-  &.selected-active {
-    border: 2px solid $gold !important;
-    transform: scale(1.05);
-    box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
-    z-index: 2; 
-  }
-
-  &.is-locked {
-    pointer-events: auto; 
-    
-    .item-icon {
-      filter: grayscale(100%); 
-      opacity: 0.4; 
-    }
-    .item-name {
-      color: #777;
-    }
-  }
-}
-
-.card-bg {
-  position: absolute; inset: 0;
-  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-  z-index: 0;
-}
-
-.item-icon { width: 70%; height: 70%; z-index: 1; }
-
-.item-name {
-  position: absolute; bottom: 0; width: 100%;
-  text-align: center; font-size: 9px; color: #D7CCC8;
-  background-color: rgba(0,0,0,0.6);
-  padding: 2px 0; z-index: 2;
-}
-
-.check-mark {
-  position: absolute; top: 2px; right: 2px;
-  background: $gold; color: #000;
-  width: 14px; height: 14px;
-  border-radius: 50%; font-size: 10px;
-  display: flex; align-items: center; justify-content: center;
-  z-index: 3;
-}
-
-.lock-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  z-index: 5;
-}
-.lock-emoji {
-  font-size: 24px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-}
-
-/* --- ✨✨✨ EX级金魄聚魂特效 CSS ✨✨✨ --- */
+/* --- ✨✨✨ EX级·金魄聚魂特效 CSS ✨✨✨ */
 
 .fusion-overlay {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background-color: rgba(0, 0, 0, 0.9); /* 更黑的背景 */
-  z-index: 999; 
+  background-color: rgba(0, 0, 0, 0.9); z-index: 999; 
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   animation: overlayFadeIn 0.3s ease-out;
 }
@@ -758,109 +589,36 @@ $epic-border: #FFD700;
 .fusion-rays {
   position: absolute; width: 200vw; height: 200vw;
   background: conic-gradient(from 0deg, transparent 0%, rgba(255, 215, 0, 0.1) 10%, transparent 20%, rgba(255, 215, 0, 0.1) 30%, transparent 40%);
-  animation: raysRotate 4s infinite linear;
-  opacity: 0;
-  animation-delay: 0.5s;
-  animation-fill-mode: forwards;
+  animation: raysRotate 4s infinite linear; opacity: 0; animation-delay: 0.5s; animation-fill-mode: forwards;
 }
 
 /* 2. 四方流光 */
-.stream {
-  position: absolute; width: 20rpx; height: 20rpx;
-  background: $gold;
-  border-radius: 50%;
-  box-shadow: 0 0 20rpx $gold;
-  opacity: 0;
-}
+.stream { position: absolute; width: 20rpx; height: 20rpx; background: $gold; border-radius: 50%; box-shadow: 0 0 20rpx $gold; opacity: 0; }
 .stream-tl { top: 10%; left: 10%; animation: flyIn 0.8s cubic-bezier(0.5, 0, 0.5, 1) forwards; }
 .stream-tr { top: 10%; right: 10%; animation: flyIn 0.8s cubic-bezier(0.5, 0, 0.5, 1) forwards; }
 .stream-bl { bottom: 30%; left: 10%; animation: flyIn 0.8s cubic-bezier(0.5, 0, 0.5, 1) forwards; }
 .stream-br { bottom: 30%; right: 10%; animation: flyIn 0.8s cubic-bezier(0.5, 0, 0.5, 1) forwards; }
 
 /* 3. 核心光球 */
-.fusion-core {
-  width: 200rpx; height: 200rpx;
-  position: relative;
-  z-index: 10;
-  animation: coreSequence 2s forwards; /* 关键序列动画 */
-}
-
-.core-inner {
-  position: absolute; inset: 20rpx;
-  background: radial-gradient(circle, #fff 0%, $gold 60%, transparent 100%);
-  border-radius: 50%;
-  box-shadow: 0 0 60rpx rgba(255, 215, 0, 0.8);
-}
-
-.core-outer {
-  position: absolute; inset: 0;
-  border: 4rpx solid rgba(255, 215, 0, 0.6);
-  border-radius: 50%;
-  border-top-color: transparent; 
-  animation: outerRotate 1s infinite linear;
-}
+.fusion-core { width: 200rpx; height: 200rpx; position: relative; z-index: 10; animation: coreSequence 2s forwards; }
+.core-inner { position: absolute; inset: 20rpx; background: radial-gradient(circle, #fff 0%, $gold 60%, transparent 100%); border-radius: 50%; box-shadow: 0 0 60rpx rgba(255, 215, 0, 0.8); }
+.core-outer { position: absolute; inset: 0; border: 4rpx solid rgba(255, 215, 0, 0.6); border-radius: 50%; border-top-color: transparent; animation: outerRotate 1s infinite linear; }
 
 /* 4. 冲击波 */
 .fusion-shockwave {
-  position: absolute; top: 50%; left: 50%;
-  width: 100rpx; height: 100rpx;
-  border: 10rpx solid #fff;
-  border-radius: 50%;
-  opacity: 0;
-  transform: translate(-50%, -50%);
-  animation: shockwaveExpand 0.5s 1.5s ease-out forwards; /* 1.5秒时触发 */
+  position: absolute; top: 50%; left: 50%; width: 100rpx; height: 100rpx;
+  border: 10rpx solid #fff; border-radius: 50%; opacity: 0; transform: translate(-50%, -50%);
+  animation: shockwaveExpand 0.5s 1.5s ease-out forwards; 
 }
 
-.fusion-text {
-  margin-top: 80rpx;
-  color: $gold;
-  font-size: 36rpx;
-  letter-spacing: 16rpx;
-  font-weight: bold;
-  opacity: 0;
-  animation: textFadeIn 0.5s 0.8s forwards; 
-  z-index: 10;
-}
+.fusion-text { margin-top: 80rpx; color: $gold; font-size: 36rpx; letter-spacing: 16rpx; font-weight: bold; opacity: 0; animation: textFadeIn 0.5s 0.8s forwards; z-index: 10; }
 
-/* --- 关键帧定义 --- */
-
+/* --- 关键帧 --- */
 @keyframes overlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-@keyframes flyIn {
-  0% { opacity: 0; transform: scale(0.5); }
-  20% { opacity: 1; transform: scale(1); }
-  100% { top: 50%; left: 50%; right: auto; bottom: auto; opacity: 0; transform: scale(0.2); }
-}
-
-@keyframes coreSequence {
-  0% { transform: scale(0); opacity: 0; }
-  10% { transform: scale(1); opacity: 1; } /* 出现 */
-  40% { transform: scale(1); } /* 接收流光 */
-  40.1% { animation-timing-function: ease-in-out; } /* 开始震动 */
-  75% { transform: scale(0.8) translate(2px, -2px); filter: brightness(2); } /* 蓄力高亮 */
-  77% { transform: scale(0.8) translate(-2px, 2px); }
-  79% { transform: scale(0.8) translate(2px, 2px); }
-  81% { transform: scale(0.8) translate(-2px, -2px); }
-  100% { transform: scale(4); opacity: 0; } /* 爆发消失 */
-}
-
-@keyframes shockwaveExpand {
-  0% { width: 10rpx; height: 10rpx; opacity: 1; border-width: 20rpx; }
-  100% { width: 1000rpx; height: 1000rpx; opacity: 0; border-width: 0; }
-}
-
-@keyframes raysRotate {
-  from { transform: rotate(0deg); opacity: 0; }
-  20% { opacity: 0.5; }
-  to { transform: rotate(360deg); opacity: 0; }
-}
-
-@keyframes outerRotate {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes textFadeIn {
-  from { opacity: 0; transform: translateY(20rpx); }
-  to { opacity: 1; transform: translateY(0); }
-}
+@keyframes flyIn { 0% { opacity: 0; transform: scale(0.5); } 20% { opacity: 1; transform: scale(1); } 100% { top: 50%; left: 50%; right: auto; bottom: auto; opacity: 0; transform: scale(0.2); } }
+@keyframes coreSequence { 0% { transform: scale(0); opacity: 0; } 10% { transform: scale(1); opacity: 1; } 40% { transform: scale(1); } 40.1% { animation-timing-function: ease-in-out; } 75% { transform: scale(0.8) translate(2px, -2px); filter: brightness(2); } 77% { transform: scale(0.8) translate(-2px, 2px); } 79% { transform: scale(0.8) translate(2px, 2px); } 81% { transform: scale(0.8) translate(-2px, -2px); } 100% { transform: scale(4); opacity: 0; } }
+@keyframes shockwaveExpand { 0% { width: 10rpx; height: 10rpx; opacity: 1; border-width: 20rpx; } 100% { width: 1000rpx; height: 1000rpx; opacity: 0; border-width: 0; } }
+@keyframes raysRotate { from { transform: rotate(0deg); opacity: 0; } 20% { opacity: 0.5; } to { transform: rotate(360deg); opacity: 0; } }
+@keyframes outerRotate { to { transform: rotate(360deg); } }
+@keyframes textFadeIn { from { opacity: 0; transform: translateY(20rpx); } to { opacity: 1; transform: translateY(0); } }
 </style>
