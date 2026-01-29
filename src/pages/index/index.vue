@@ -27,7 +27,7 @@
     </view>
 
     <MusicControl 
-      src="/static/audio/bgm-hall-intro.mp3" 
+      src="https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/audio/bgm-hall-intro.mp3?sign=32c2713fbf2d0f75aa292b14094d5906&t=1769661137" 
       :top="sidebarStartTop" 
       :left="20"
     />

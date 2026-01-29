@@ -62,21 +62,21 @@ const tracks = [
     name: '掐嗓 · 借扇',
     desc: '孙悟空大战铁扇公主 (武戏)',
     cover: '/static/images/wiki/vocal/char-shadow-monkey.png.png', 
-    audio: '/static/audio/wiki/vocal/vocal-monkey.mp3' 
+    audio: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/audio/vocal-monkey.mp3' 
   },
   {
     id: 'snake',
     name: '断桥 · 情深',
     desc: '白娘子与许仙 (文戏)',
     cover: '/static/images/wiki/vocal/char-shadow-snake.png.png', 
-    audio: '/static/audio/wiki/vocal/vocal-snake.mp3' 
+    audio: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/audio/vocal-snake.mp3' 
   },
   {
     id: 'zhuge',
     name: '空城 · 抚琴',
     desc: '诸葛亮智退司马懿 (生角)',
     cover: '/static/images/wiki/vocal/char-shadow-zhuge.png.png', 
-    audio: '/static/audio/wiki/vocal/vocal-zhuge.mp3' 
+    audio: 'https://636c-cloud1-8gizllp3a0666dde-1400097024.tcb.qcloud.la/audio/vocal-zhuge.mp3' 
   }
 ];
 
