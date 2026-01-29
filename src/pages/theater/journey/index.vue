@@ -190,7 +190,7 @@ const enterLevel = (index) => {
 }
 
 .path-1-2 {
-  bottom: 18%; left: 20%;
+  bottom: 20%; left: 20%;
   width: 75%;
   transform: rotate(-39deg);
 }
