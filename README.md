@@ -6,7 +6,18 @@
 
 ## 项目截图
 
-> 截图和演示素材待补充。建议后续放置：加载页、主大厅、影卷百科、指尖剧场、西游征途、皮影工坊、文创集市等核心页面。
+<table>
+  <tr>
+    <td align="center"><img src="./皮影工坊.jpg" width="220" alt="皮影工坊" /><br />皮影工坊</td>
+    <td align="center"><img src="./西游征途.jpg" width="220" alt="西游征途" /><br />西游征途</td>
+    <td align="center"><img src="./文创集市.jpg" width="220" alt="文创集市" /><br />文创集市</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./影卷.jpg" width="220" alt="影卷百科" /><br />影卷百科</td>
+    <td align="center"><img src="./溯源历史.jpg" width="220" alt="溯源历史" /><br />溯源历史</td>
+    <td align="center"><img src="./听戏.jpg" width="220" alt="听戏互动" /><br />听戏互动</td>
+  </tr>
+</table>
 
 ## 项目亮点
 
